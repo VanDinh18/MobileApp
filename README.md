@@ -33,3 +33,17 @@ Thư mục  | Mô tả
 /screens | Chứa các màn hình chính của ứng dụng
 
 ### Làm việc với Git
+1. Clone code về máy 
+> git clone 
+2. Kiểm tra trạng thái thay đổi
+> git status
+3. Đưa các file vào danh sách trước khi commit
+> git add . 
+4. Commit những thay đổi trước khi push lên server
+> git commit -a -m "abc"
+5. Tải lên server nhánh master
+> git push -u origin master
+6. Xem các nhánh đang có
+> git branch -a
+7. Trước khi code 1 phần mới cần update code
+> git pull origin master
