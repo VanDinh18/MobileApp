@@ -27,11 +27,12 @@ class LoginScreen extends Component{
             <Wallpaper>
                 <LogoLogin/>
                 <FormLogin/>
-                <ButtonSubmitLogin/>
-                <SignUpSectionLogin/>
+                <ButtonSubmitLogin TextButton='LOGIN'/>
+                <SignUpSectionLogin navigation={this.props.navigation}/>
             </Wallpaper>
         );
     }
 }
+
 
 export default LoginScreen;

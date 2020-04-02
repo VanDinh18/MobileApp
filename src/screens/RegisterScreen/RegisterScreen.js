@@ -6,24 +6,32 @@ import {
     TouchableOpacity,
     TextInput,
     StyleSheet,
-
 } from 'react-native';
 
-class RegisterScreen extends Component{
-    constructor(props){
-        super(props);
 
+import Wallpaper from '../../components/Wallpaper';
+import LogoLogin from '../../components/LogoLogin';
+import FormRegister from '../../components/FormRegister';
+
+import ButtonSubmitRegister from '../../components/ButtonSubmitRegister';
+
+class RegisterScreen extends Component {
+    constructor(props) {
+        super(props);
         this.state = {
 
         }
     }
 
-    render(){
-        return(
-            <View>
-                <Text style={{fontSize: 30}}>RegisterScreen</Text>
-            </View>
-        )
+    render() {
+        return (
+            <Wallpaper>
+                <LogoLogin />
+                <FormRegister />
+                <ButtonSubmitRegister TextButton='REGISTER' />
+                <ButtonSubmitRegister TextButton='CANCLE' />
+            </Wallpaper>
+        );
     }
 
 }

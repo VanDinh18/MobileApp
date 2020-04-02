@@ -1,12 +1,23 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, Dimensions } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
+
 
 export default class SignupSectionLogin extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.text}>Create Account</Text>
-        <Text style={styles.text}>Forgot Password?</Text>
+        <TouchableOpacity onPress={() => this.props.navigation.navigate('RegisterScreen')}>
+          <Text style={styles.text}>Create Account</Text>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Text style={styles.text}>Forgot Password?</Text>
+        </TouchableOpacity>
       </View>
     );
   }

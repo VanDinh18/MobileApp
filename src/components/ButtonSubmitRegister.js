@@ -11,7 +11,7 @@ import {
     Dimensions,
 } from 'react-native';
 
-export default class ButtonSubmitLogin extends Component {
+export default class ButtonSubmitRegister extends Component {
     constructor() {
         super();
 
@@ -39,7 +39,7 @@ const DEVICE_HEIGHT = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flex: 0.5,
         alignItems: 'center',
         justifyContent: 'flex-start',
     },
