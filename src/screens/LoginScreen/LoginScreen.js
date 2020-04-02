@@ -6,13 +6,17 @@ import {
     TouchableOpacity,
     TextInput,
     StyleSheet,
-
 } from 'react-native';
 
+
+import Wallpaper from '../../components/Wallpaper';
+import LogoLogin from '../../components/LogoLogin';
+import FormLogin from '../../components/FormLogin';
+import SignUpSectionLogin from '../../components/SignupSectionLogin';
+import ButtonSubmitLogin from '../../components/ButtonSubmitLogin';
 class LoginScreen extends Component{
     constructor(props){
         super(props);
-
         this.state = {
 
         }
@@ -20,12 +24,14 @@ class LoginScreen extends Component{
 
     render(){
         return(
-            <View>
-                <Text style={{fontSize: 30}}>Login</Text>
-            </View>
-        )
+            <Wallpaper>
+                <LogoLogin/>
+                <FormLogin/>
+                <ButtonSubmitLogin/>
+                <SignUpSectionLogin/>
+            </Wallpaper>
+        );
     }
-
 }
 
 export default LoginScreen;
