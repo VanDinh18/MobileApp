@@ -27,7 +27,7 @@ class LoginScreen extends Component{
             <Wallpaper>
                 <LogoLogin/>
                 <FormLogin/>
-                <ButtonSubmitLogin TextButton='LOGIN'/>
+                <ButtonSubmitLogin TextButton='LOGIN' navigation={this.props.navigation}/>
                 <SignUpSectionLogin navigation={this.props.navigation}/>
             </Wallpaper>
         );

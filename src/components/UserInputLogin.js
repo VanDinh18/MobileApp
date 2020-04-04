@@ -1,8 +1,23 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, View, TextInput, Image, Dimensions } from 'react-native';
+import { StyleSheet, View, TextInput, Image, Dimensions, Alert, TouchableOpacity } from 'react-native';
 
 export default class UserInputLogin extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            text: '',
+        };
+
+        this.sendData = this.sendData.bind(this);
+    }
+
+    /* send data from UserInputLogin to FormRegister */
+    sendData = () => {
+        setTimeout(() => console.log(this.state.text), 1500);
+        this.props.parentCallback(this.state.text, this.props.placeholder);
+    }
+
     render() {
         return (
             <View style={styles.inputWrapper}>
@@ -16,6 +31,9 @@ export default class UserInputLogin extends Component {
                     returnKeyType={this.props.returnKeyType}
                     placeholderTextColor="white"
                     underlineColorAndroid="transparent"
+                    onChangeText={(text) => this.setState({ text })}
+                    value={this.state.text}
+                    onChange={this.sendData}
                 />
             </View>
         );

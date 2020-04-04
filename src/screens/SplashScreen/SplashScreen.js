@@ -20,6 +20,7 @@ class SplashScreen extends Component {
         };
     }
 
+    //config firebase truoc khi chay
     componentWillMount(){
         const firebaseConfig = {
             apiKey: "AIzaSyDllQxvKmzBl0KSgMwZMmO1RJWxp9XWn_k",
