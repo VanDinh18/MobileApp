@@ -20,8 +20,12 @@ export default class FormLogin extends Component {
         this.state = {
             showPass: true,
             press: false,
+            emailLogin: '',
+            passwordLogin: '',
         };
         this.showPass = this.showPass.bind(this);
+        this.callbackFunction = this.callbackFunction.bind(this);
+        this.sendData = this.sendData.bind(this);
     }
 
     showPass() {
@@ -30,15 +34,36 @@ export default class FormLogin extends Component {
             : this.setState({ showPass: true, press: false });
     }
 
+    /*lấy dữ liệu từ component con UserInputLogin  về component cha FormLogin */
+    callbackFunction = (field, id) => {
+        setTimeout(()=> console.log("field: " + field), 1000);
+        if (id == "Email") {
+            this.setState({ emailLogin: field });
+            this.sendData(field, this.state.passwordLogin);
+        }
+        if (id == "Password") {
+            this.setState({ passwordLogin: field })
+            this.sendData(this.state.emailLogin, field);
+        }
+
+    }
+
+    /*send data from FormLogin to LoginScreen*/
+    sendData = (emailLogin, passwordLogin) => {
+        this.props.parentCallback(emailLogin, passwordLogin);
+        //setTimeout(()=> console.log(emailLogin + '-' + passwordLogin), 1000);
+    }
+
     render() {
         return (
             <KeyboardAvoidingView behavior="padding" style={styles.container}>
                 <UserInputLogin
                     source={usernameImg}
-                    placeholder="Username"
+                    placeholder="Email"
                     autoCapitalize={'none'}
                     returnKeyType={'done'}
                     autoCorrect={false}
+                    parentCallback={this.callbackFunction}
                 />
                 <UserInputLogin
                     source={passwordImg}
@@ -47,6 +72,7 @@ export default class FormLogin extends Component {
                     returnKeyType={'done'}
                     autoCapitalize={'none'}
                     autoCorrect={false}
+                    parentCallback={this.callbackFunction}
                 />
                 <TouchableOpacity
                     activeOpacity={0.7}
@@ -69,7 +95,7 @@ const styles = StyleSheet.create({
     },
     btnEye: {
         position: 'absolute',
-        top: DEVICE_HEIGHT/11, //12 flex
+        top: DEVICE_HEIGHT / 11, //12 flex
         right: 40,
     },
     iconEye: {

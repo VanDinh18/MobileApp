@@ -10,6 +10,7 @@ import {
     View,
     Dimensions,
 } from 'react-native';
+import firebase from '@react-native-firebase/app';
 
 export default class ButtonSubmitLogin extends Component {
     constructor() {
@@ -21,17 +22,32 @@ export default class ButtonSubmitLogin extends Component {
 
     }
 
-    loginAccount =(navigation)=>{
-        navigation.navigate("HomeScreen");
+    loginAccount = (navigation, emailLog, passwordLog) => {
+        //setTimeout(()=> console.log(emailLog + '-' + passwordLog), 1000);
+        try {
+            firebase
+                .auth()
+                .signInWithEmailAndPassword(emailLog, passwordLog)
+                .then(res => {
+                    console.log(res.user.email);
+                    navigation.navigate('HomeScreen',
+                        {
+                            itemId: res.user.email,
+                        }
+                    );
+                });
+        } catch (error) {
+            console.log(error.toString(error));
+        }
     }
 
     render() {
-        const { TextButton, navigation } = this.props;
+        const { TextButton, navigation, emailLog, passwordLog } = this.props;
         return (
             <View style={styles.container}>
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={() => this.loginAccount(navigation)}
+                    onPress={() => this.loginAccount(navigation, emailLog, passwordLog)}
                 >
                     <Text style={styles.text}>{TextButton}</Text>
                 </TouchableOpacity>

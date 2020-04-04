@@ -6,16 +6,14 @@ export default class UserInputLogin extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            text: '',
         };
 
         this.sendData = this.sendData.bind(this);
     }
 
     /* send data from UserInputLogin to FormRegister */
-    sendData = () => {
-        setTimeout(() => console.log(this.state.text), 1500);
-        this.props.parentCallback(this.state.text, this.props.placeholder);
+    sendData = (text) => {
+        this.props.parentCallback(text, this.props.placeholder);
     }
 
     render() {
@@ -31,9 +29,11 @@ export default class UserInputLogin extends Component {
                     returnKeyType={this.props.returnKeyType}
                     placeholderTextColor="white"
                     underlineColorAndroid="transparent"
-                    onChangeText={(text) => this.setState({ text })}
+                    onChangeText={
+                        (text) => {this.sendData(text) }
+                    }
                     value={this.state.text}
-                    onChange={this.sendData}
+
                 />
             </View>
         );

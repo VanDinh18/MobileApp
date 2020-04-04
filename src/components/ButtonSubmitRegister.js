@@ -23,7 +23,7 @@ export default class ButtonSubmitRegister extends Component {
         this.registerAccount = this.registerAccount.bind(this);
     }
 
-    registerAccount = (emailSub, passwordSub) => {
+    registerAccount = (emailSub, passwordSub, navigation) => {
         try {
             firebase
                 .auth()
@@ -32,10 +32,10 @@ export default class ButtonSubmitRegister extends Component {
                     console.log(user);
                 });
             console.log('dang ky thanh cong.....');
-          
+            navigation.navigate("LoginScreen");
         } catch (error) {
-            // console.log(error.toString(error));
-            console.log('error..................')
+            console.log('error..................');
+            console.log(error.toString(error));
         }
     }
 
@@ -45,7 +45,7 @@ export default class ButtonSubmitRegister extends Component {
             <View style={styles.container}>
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={() => this.registerAccount(emailSub, passwordSub)}
+                    onPress={() => this.registerAccount(emailSub, passwordSub, navigation)}
                 >
                     <Text style={styles.text}>{TextButton}</Text>
                 </TouchableOpacity>

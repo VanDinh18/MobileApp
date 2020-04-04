@@ -28,6 +28,7 @@ class RegisterScreen extends Component {
 
     callbackFunction = (email, password) => {
         this.setState({ emailSub: email, passwordSub: password })
+        //setTimeout(() => console.log(this.state.emailSub+"-"+this.state.passwordSub), 1000);
     }
 
     render() {
