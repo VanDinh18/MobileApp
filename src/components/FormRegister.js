@@ -28,29 +28,28 @@ export default class FormRegister extends Component {
         this.callbackFunction = this.callbackFunction.bind(this);
         this.sendData = this.sendData.bind(this);
     }
+    /*hiển thị password*/
     showPass() {
         this.state.press === false
             ? this.setState({ showPass: false, press: true })
             : this.setState({ showPass: true, press: false });
     }
 
-    callbackFunction (field, id) {
+    /*lấy dữ liệu từ component con UserInputLogin  về component cha FormRegister */
+    callbackFunction =(field, id)=> {
         if (id == "Email") {
-            this.setState({ emailRegister: field })
+            this.setState({ emailRegister: field });
+            this.sendData(field, this.state.passwordRegister);
         }
         if (id == "Password") {
             this.setState({ passwordRegister: field })
+            this.sendData(this.state.emailRegister, field);
         }
-        this.sendData();
-        // setTimeout(
-        //     () => console.log(this.state.emailRegister + "---" + this.state.passwordRegister + "---" + id)
-        //     , 1500
-        // )
     }
 
     /*send data from FormRegister to RegisterScreen*/
-    sendData = () => {
-        this.props.parentCallback(this.state.emailRegister, this.state.passwordRegister)
+    sendData = (emailRegister, passwordRegister) => {
+        this.props.parentCallback(emailRegister, passwordRegister);
     }
 
     render() {

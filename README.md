@@ -18,6 +18,8 @@
 * Clone code trên Github, vào thư mục gốc, sau đó xóa thư mục node_modules
 * Cài đặt các package
 > npm install
+* Đăng nhập vào tài khoản Firebase (email: ptuddd.vnu@gmail.com, pass: ptuddd***)
+>firebase login
 * Bắt đầu
 > npx react-native start
 * Start application (ở terminal khác)

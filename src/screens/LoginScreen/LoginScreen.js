@@ -14,21 +14,33 @@ import LogoLogin from '../../components/LogoLogin';
 import FormLogin from '../../components/FormLogin';
 import SignUpSectionLogin from '../../components/SignupSectionLogin';
 import ButtonSubmitLogin from '../../components/ButtonSubmitLogin';
-class LoginScreen extends Component{
-    constructor(props){
+class LoginScreen extends Component {
+    constructor(props) {
         super(props);
         this.state = {
-
+            emailLogin: '',
+            passwordLogin: '',
         }
+        this.callbackFuncion = this.callbackFuncion.bind(this);
     }
 
-    render(){
-        return(
+    callbackFuncion = (email, password) => {
+        this.setState({ emailLogin: email, passwordLogin: password });
+        //setTimeout(()=> console.log(email + '-' + password), 1000);
+    }
+
+    render() {
+        return (
             <Wallpaper>
-                <LogoLogin/>
-                <FormLogin/>
-                <ButtonSubmitLogin TextButton='LOGIN' navigation={this.props.navigation}/>
-                <SignUpSectionLogin navigation={this.props.navigation}/>
+                <LogoLogin />
+                <FormLogin parentCallback={this.callbackFuncion} />
+                <ButtonSubmitLogin
+                    TextButton='LOGIN'
+                    navigation={this.props.navigation}
+                    emailLog={this.state.emailLogin}
+                    passwordLog={this.state.passwordLogin}
+                />
+                <SignUpSectionLogin navigation={this.props.navigation} />
             </Wallpaper>
         );
     }
