@@ -11,18 +11,9 @@ import {
     Dimensions,
 } from 'react-native';
 
-export default class ButtonSubmitLogin extends Component {
+export default class ButtonSubmitCancle extends Component {
     constructor() {
         super();
-
-        this.state = {
-            isLoading: false,
-        };
-
-    }
-
-    loginAccount =(navigation)=>{
-        navigation.navigate("HomeScreen");
     }
 
     render() {
@@ -31,8 +22,7 @@ export default class ButtonSubmitLogin extends Component {
             <View style={styles.container}>
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={() => this.loginAccount(navigation)}
-                >
+                    onPress={() => navigation.navigate("LoginScreen")}>
                     <Text style={styles.text}>{TextButton}</Text>
                 </TouchableOpacity>
             </View>
@@ -45,7 +35,7 @@ const DEVICE_HEIGHT = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flex: 0.5,
         alignItems: 'center',
         justifyContent: 'flex-start',
     },

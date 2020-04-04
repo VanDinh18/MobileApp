@@ -7,6 +7,7 @@ import {
     TouchableOpacity,
     Image,
     Dimensions,
+    Alert,
 } from 'react-native';
 
 import UserInputLogin from './UserInputLogin';
@@ -20,14 +21,36 @@ export default class FormRegister extends Component {
         this.state = {
             showPass: true,
             press: false,
+            emailRegister: '',
+            passwordRegister: '',
         };
         this.showPass = this.showPass.bind(this);
+        this.callbackFunction = this.callbackFunction.bind(this);
+        this.sendData = this.sendData.bind(this);
     }
-
     showPass() {
         this.state.press === false
             ? this.setState({ showPass: false, press: true })
             : this.setState({ showPass: true, press: false });
+    }
+
+    callbackFunction (field, id) {
+        if (id == "Email") {
+            this.setState({ emailRegister: field })
+        }
+        if (id == "Password") {
+            this.setState({ passwordRegister: field })
+        }
+        this.sendData();
+        // setTimeout(
+        //     () => console.log(this.state.emailRegister + "---" + this.state.passwordRegister + "---" + id)
+        //     , 1500
+        // )
+    }
+
+    /*send data from FormRegister to RegisterScreen*/
+    sendData = () => {
+        this.props.parentCallback(this.state.emailRegister, this.state.passwordRegister)
     }
 
     render() {
@@ -40,12 +63,13 @@ export default class FormRegister extends Component {
                     returnKeyType={'done'}
                     autoCorrect={false}
                 />
-                 <UserInputLogin
+                <UserInputLogin
                     source={usernameImg}
                     placeholder="Email"
                     autoCapitalize={'none'}
                     returnKeyType={'done'}
                     autoCorrect={false}
+                    parentCallback={this.callbackFunction}
                 />
                 <UserInputLogin
                     source={passwordImg}
@@ -54,6 +78,7 @@ export default class FormRegister extends Component {
                     returnKeyType={'done'}
                     autoCapitalize={'none'}
                     autoCorrect={false}
+                    parentCallback={this.callbackFunction}
                 />
                 <UserInputLogin
                     source={passwordImg}
@@ -84,7 +109,7 @@ const styles = StyleSheet.create({
     },
     btnEye: {
         position: 'absolute',
-        top: DEVICE_HEIGHT/6, //12 flex
+        top: DEVICE_HEIGHT / 6, //12 flex
         right: 40,
     },
     iconEye: {

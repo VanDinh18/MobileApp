@@ -10,23 +10,43 @@ import {
     View,
     Dimensions,
 } from 'react-native';
+import firebase from '@react-native-firebase/app';
+import '@react-native-firebase/auth';
+
 
 export default class ButtonSubmitRegister extends Component {
     constructor() {
         super();
-
         this.state = {
-            isLoading: false,
-        };
 
+        };
+        this.registerAccount = this.registerAccount.bind(this);
     }
 
+    registerAccount = (emailSub, passwordSub) => {
+        try {
+            firebase
+                .auth()
+                .createUserWithEmailAndPassword(emailSub, passwordSub)
+                .then(user => {
+                    console.log(user);
+                });
+            console.log('dang ky thanh cong.....');
+          
+        } catch (error) {
+            // console.log(error.toString(error));
+            console.log('error..................')
+        }
+    }
 
     render() {
-        const { TextButton } = this.props;
+        const { TextButton, emailSub, passwordSub, navigation } = this.props;
         return (
             <View style={styles.container}>
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => this.registerAccount(emailSub, passwordSub)}
+                >
                     <Text style={styles.text}>{TextButton}</Text>
                 </TouchableOpacity>
             </View>
