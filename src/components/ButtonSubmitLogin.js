@@ -15,22 +15,20 @@ import firebase from '@react-native-firebase/app';
 export default class ButtonSubmitLogin extends Component {
     constructor() {
         super();
-
         this.state = {
-            isLoading: false,
+          
         };
 
     }
 
     loginAccount = (navigation, emailLog, passwordLog) => {
-        //setTimeout(()=> console.log(emailLog + '-' + passwordLog), 1000);
         try {
             firebase
                 .auth()
                 .signInWithEmailAndPassword(emailLog, passwordLog)
                 .then(res => {
                     console.log(res.user.email);
-                    navigation.navigate('HomeScreen',
+                    navigation.navigate('Main',
                         {
                             itemId: res.user.email,
                         }

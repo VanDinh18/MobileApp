@@ -20,8 +20,19 @@ class SplashScreen extends Component {
         };
     }
 
-    //config firebase truoc khi chay
-    componentWillMount(){
+
+    performTimeConsumingTask = async () => {
+        return new Promise((resolve) =>
+            setTimeout(
+                () => { resolve('result') },
+                2000
+            )
+        )
+    }
+
+    async componentDidMount() {
+        // Preload data from an external API
+        // Preload data using AsyncStorage
         const firebaseConfig = {
             apiKey: "AIzaSyDllQxvKmzBl0KSgMwZMmO1RJWxp9XWn_k",
             authDomain: "mobileapp-12939.firebaseapp.com",
@@ -36,20 +47,7 @@ class SplashScreen extends Component {
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
-    }
 
-    performTimeConsumingTask = async () => {
-        return new Promise((resolve) =>
-            setTimeout(
-                () => { resolve('result') },
-                2000
-            )
-        )
-    }
-
-    async componentDidMount() {
-        // Preload data from an external API
-        // Preload data using AsyncStorage
         const data = await this.performTimeConsumingTask();
         if (data !== null) {
             this.props.navigation.navigate('LoginScreen');
