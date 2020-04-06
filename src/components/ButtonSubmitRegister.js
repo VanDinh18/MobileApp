@@ -31,10 +31,9 @@ export default class ButtonSubmitRegister extends Component {
                 .then(user => {
                     console.log(user);
                 });
-            console.log('dang ky thanh cong.....');
+            console.log('Resgister Successfull !!!');
             navigation.navigate("LoginScreen");
         } catch (error) {
-            console.log('error..................');
             console.log(error.toString(error));
         }
     }

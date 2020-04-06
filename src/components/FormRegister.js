@@ -36,7 +36,7 @@ export default class FormRegister extends Component {
     }
 
     /*lấy dữ liệu từ component con UserInputLogin  về component cha FormRegister */
-    callbackFunction =(field, id)=> {
+    callbackFunction = (field, id) => {
         if (id == "Email") {
             this.setState({ emailRegister: field });
             this.sendData(field, this.state.passwordRegister);

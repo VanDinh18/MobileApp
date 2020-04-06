@@ -36,7 +36,7 @@ export default class FormLogin extends Component {
 
     /*lấy dữ liệu từ component con UserInputLogin  về component cha FormLogin */
     callbackFunction = (field, id) => {
-        setTimeout(()=> console.log("field: " + field), 1000);
+        // setTimeout(() => console.log("field: " + field), 1000);
         if (id == "Email") {
             this.setState({ emailLogin: field });
             this.sendData(field, this.state.passwordLogin);
@@ -45,13 +45,11 @@ export default class FormLogin extends Component {
             this.setState({ passwordLogin: field })
             this.sendData(this.state.emailLogin, field);
         }
-
     }
 
     /*send data from FormLogin to LoginScreen*/
     sendData = (emailLogin, passwordLogin) => {
         this.props.parentCallback(emailLogin, passwordLogin);
-        //setTimeout(()=> console.log(emailLogin + '-' + passwordLogin), 1000);
     }
 
     render() {
