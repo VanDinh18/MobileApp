@@ -10,15 +10,34 @@ import {
     View,
     Dimensions,
 } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import firebase from '@react-native-firebase/app';
 
 export default class ButtonSubmitLogin extends Component {
     constructor() {
         super();
         this.state = {
-          
+            userData: {},
         };
 
+    }
+
+    storeData = async (user) => {
+        try {
+            await AsyncStorage.setItem('userData', JSON.stringify(user));
+        } catch (e) {
+            console.log("Something went wrong", e);
+        }
+    }
+
+    getData = async (user) => {
+        try {
+            const userData = await AsyncStorage.getItem('userData');
+            const data = JSON.parse(userData);
+            console.log(data);
+        } catch (e) {
+            console.log("Something went wrong", e);
+        }
     }
 
     loginAccount = (navigation, emailLog, passwordLog) => {
@@ -27,16 +46,23 @@ export default class ButtonSubmitLogin extends Component {
                 .auth()
                 .signInWithEmailAndPassword(emailLog, passwordLog)
                 .then(res => {
-                    console.log(res.user.email);
+                    //console.log(res.user.email);
                     navigation.navigate('Main',
                         {
                             itemId: res.user.email,
                         }
                     );
+
+                    this.storeData(JSON.stringify(res.user));
                 });
         } catch (error) {
             console.log(error.toString(error));
         }
+    }
+
+    componentDidMount() {
+        //this.getData();
+        console.log("haha");
     }
 
     render() {

@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import firebase from '@react-native-firebase/app';
 import bgSrc from '../../assets/images/logo.png';
+import AsyncStorage from "@react-native-community/async-storage";
 
 class SplashScreen extends Component {
     constructor(props) {
@@ -22,12 +23,13 @@ class SplashScreen extends Component {
 
 
     performTimeConsumingTask = async () => {
-        return new Promise((resolve) =>
+        const userData = await AsyncStorage.getItem('userData');
+        const data = JSON.parse(userData);
+        return new Promise((resolve, reject) => {
             setTimeout(
-                () => { resolve('result') },
-                2000
-            )
-        )
+                () => { resolve(data) },
+                2000)
+        })
     }
 
     async componentDidMount() {
@@ -42,7 +44,7 @@ class SplashScreen extends Component {
             messagingSenderId: "1088353540886",
             appId: "1:1088353540886:web:7c8b8ba4cbd390f2b88e37",
             measurementId: "G-RZJTPLXVZ1"
-          };
+        };
 
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
@@ -50,6 +52,10 @@ class SplashScreen extends Component {
 
         const data = await this.performTimeConsumingTask();
         if (data !== null) {
+            console.log(data);
+            this.props.navigation.navigate('Main');
+        }
+        else {
             this.props.navigation.navigate('LoginScreen');
         }
     }
