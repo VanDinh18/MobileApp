@@ -33,7 +33,6 @@ export default class UserInputLogin extends Component {
                         (text) => {this.sendData(text) }
                     }
                     value={this.state.text}
-
                 />
             </View>
         );
