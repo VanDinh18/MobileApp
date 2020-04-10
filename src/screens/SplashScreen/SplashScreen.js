@@ -21,7 +21,6 @@ class SplashScreen extends Component {
         };
     }
 
-
     performTimeConsumingTask = async () => {
         const userData = await AsyncStorage.getItem('userData');
         const data = JSON.parse(userData);

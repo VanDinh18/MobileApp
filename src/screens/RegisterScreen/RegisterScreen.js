@@ -22,13 +22,14 @@ class RegisterScreen extends Component {
         this.state = {
             emailSub: '',
             passwordSub: '',
+            usernameSub: '',
         };
         this.callbackFunction = this.callbackFunction.bind(this);
     }
 
-    callbackFunction = (email, password) => {
-        this.setState({ emailSub: email, passwordSub: password })
-        //setTimeout(() => console.log(this.state.emailSub+"-"+this.state.passwordSub), 1000);
+    callbackFunction = (email, password, username) => {
+        this.setState({ emailSub: email, passwordSub: password, usernameSub: username})
+        //setTimeout(() => console.log(this.state.emailSub+"-"+this.state.passwordSub+"-"+this.state.usernameSub), 1000);
     }
 
     render() {
@@ -36,16 +37,22 @@ class RegisterScreen extends Component {
             <Wallpaper>
                 <LogoLogin />
                 <FormRegister parentCallback={this.callbackFunction} />
-                <ButtonSubmitRegister
-                    TextButton='REGISTER'
-                    navigation={this.props.navigation}
-                    emailSub={this.state.emailSub}
-                    passwordSub = {this.state.passwordSub}
-                />
-                <ButtonSubmitCancle
-                    TextButton='CANCLE'
-                    navigation={this.props.navigation}
-                />
+                <View style={{
+                    flex: 1,
+                    flexDirection: 'row',
+                }}>
+                    <ButtonSubmitRegister
+                        TextButton='REGISTER'
+                        navigation={this.props.navigation}
+                        emailSub={this.state.emailSub}
+                        passwordSub={this.state.passwordSub}
+                        usernameSub={this.state.usernameSub}
+                    />
+                    <ButtonSubmitCancle
+                        TextButton='CANCLE'
+                        navigation={this.props.navigation}
+                    />
+                </View>
             </Wallpaper>
         );
     }

@@ -35,14 +35,14 @@ const DEVICE_HEIGHT = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
     container: {
-        flex: 0.5,
-        alignItems: 'center',
-        justifyContent: 'flex-start',
+        flex: 1,
+        alignItems: 'flex-end',
+        marginRight: 0.07*DEVICE_WIDTH,
     },
     button: {
         backgroundColor: '#e600e6',
         height: 40,
-        width: 0.86 * DEVICE_WIDTH,
+        width: 0.4 * DEVICE_WIDTH,
         borderRadius: 20,
         flexDirection: 'column',
         alignItems: 'center',

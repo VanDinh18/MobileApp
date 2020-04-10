@@ -16,11 +16,13 @@ import firebase from '@react-native-firebase/app';
 export default class ButtonSubmitLogin extends Component {
     constructor() {
         super();
-        this.state = {
-            userData: {},
-        };
+        this.unsubcriber = null,
+            this.state = {
+                userData: null,
+            };
 
     }
+
 
     storeData = async (user) => {
         try {
@@ -47,22 +49,30 @@ export default class ButtonSubmitLogin extends Component {
                 .signInWithEmailAndPassword(emailLog, passwordLog)
                 .then(res => {
                     //console.log(res.user.email);
+                    this.storeData(JSON.stringify(res.user));
                     navigation.navigate('Main',
                         {
                             itemId: res.user.email,
                         }
                     );
-
-                    this.storeData(JSON.stringify(res.user));
                 });
         } catch (error) {
             console.log(error.toString(error));
         }
     }
 
+    /*đăng ký người dùng mới */
     componentDidMount() {
-        //this.getData();
-        console.log("haha");
+        this.unsubcriber = firebase.auth().onAuthStateChanged((changedUser) => {
+            this.setState({ userData: changedUser });
+        });
+        console.log("ComponentDidMount buttonsubmitLogin");
+    }
+
+    componentWillUnmount() {
+        if (this.unsubcriber) {
+            this.unsubcriber();
+        }
     }
 
     render() {

@@ -21,6 +21,7 @@ export default class FormRegister extends Component {
         this.state = {
             showPass: true,
             press: false,
+            usernameRegister: '',
             emailRegister: '',
             passwordRegister: '',
         };
@@ -37,19 +38,23 @@ export default class FormRegister extends Component {
 
     /*lấy dữ liệu từ component con UserInputLogin  về component cha FormRegister */
     callbackFunction = (field, id) => {
+        if(id == "Username"){
+            this.setState({usernameRegister: field});
+            this.sendData(this.state.emailRegister, this.state.passwordRegister, field)
+        }
         if (id == "Email") {
             this.setState({ emailRegister: field });
-            this.sendData(field, this.state.passwordRegister);
+            this.sendData(field, this.state.passwordRegister, this.state.usernameRegister);
         }
         if (id == "Password") {
             this.setState({ passwordRegister: field })
-            this.sendData(this.state.emailRegister, field);
+            this.sendData(this.state.emailRegister, field, this.state.usernameRegister);
         }
     }
 
     /*send data from FormRegister to RegisterScreen*/
-    sendData = (emailRegister, passwordRegister) => {
-        this.props.parentCallback(emailRegister, passwordRegister);
+    sendData = (emailRegister, passwordRegister, usernameRegister) => {
+        this.props.parentCallback(emailRegister, passwordRegister, usernameRegister);
     }
 
     render() {
@@ -61,6 +66,7 @@ export default class FormRegister extends Component {
                     autoCapitalize={'none'}
                     returnKeyType={'done'}
                     autoCorrect={false}
+                    parentCallback={this.callbackFunction}
                 />
                 <UserInputLogin
                     source={usernameImg}
@@ -78,14 +84,6 @@ export default class FormRegister extends Component {
                     autoCapitalize={'none'}
                     autoCorrect={false}
                     parentCallback={this.callbackFunction}
-                />
-                <UserInputLogin
-                    source={passwordImg}
-                    secureTextEntry={this.state.showPass}
-                    placeholder="Confirm Password"
-                    returnKeyType={'done'}
-                    autoCapitalize={'none'}
-                    autoCorrect={false}
                 />
                 <TouchableOpacity
                     activeOpacity={0.7}
@@ -108,7 +106,7 @@ const styles = StyleSheet.create({
     },
     btnEye: {
         position: 'absolute',
-        top: DEVICE_HEIGHT / 6, //12 flex
+        top: DEVICE_HEIGHT / 4.5, //12 flex
         right: 40,
     },
     iconEye: {
