@@ -21,6 +21,7 @@ const TabNavigator = createBottomTabNavigator(
         MessageScreen: {
             screen: MessageScreen,
             navigationOptions: {
+                title: 'Chats',
                 tabBarLabel: ({ focused, tintColor }) => (
                     focused
                         ?

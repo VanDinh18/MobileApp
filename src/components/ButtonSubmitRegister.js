@@ -12,17 +12,25 @@ import {
 } from 'react-native';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/auth';
-
+import '@react-native-firebase/database';
 
 export default class ButtonSubmitRegister extends Component {
     constructor() {
         super();
         this.state = {
-
+            userExist: [],
         };
         this.registerAccount = this.registerAccount.bind(this);
         this.validate = this.validate.bind(this);
         this.submit = this.submit.bind(this);
+        this.writeUserData = this.writeUserData.bind(this);
+        this.checkUsernameExist = this.checkUsernameExist.bind(this);
+    }
+
+    componentDidMount() {
+        firebase.database().ref('/users').on("value", snapshot => {
+            this.setState({ userExist: Object.values(snapshot.val()) });
+        });
     }
 
     validate = (email) => {
@@ -30,21 +38,52 @@ export default class ButtonSubmitRegister extends Component {
         return expression.test(String(email).toLowerCase())
     }
 
-    submit = (emailSub, passwordSub, navigation) => {
+    /*ghi vào database thông tin user */
+    writeUserData = (email, username) => {
+        console.log(email + username);
+        firebase.database().ref('users/' + username).set({
+            email: email,
+            username: username,
+        });
+    }
+
+    submit = async (emailSub, passwordSub, usernameSub, navigation) => {
         try {
-            firebase
+            await firebase
                 .auth()
                 .createUserWithEmailAndPassword(emailSub, passwordSub)
-                .then(user => {
-                    console.log(user);
+                .then(res => {
+                    //console.log(JSON.parse(JSON.stringify(res.user.email)));
+                    this.writeUserData(JSON.parse(JSON.stringify(res.user.email)), usernameSub);
+                    console.log('Resgister Successfull !!!');
+                    navigation.navigate("LoginScreen");
+                })
+                .catch((error) => {
+                    if (error.code == "auth/email-already-in-use") { //kiểm tra email tồn tại
+                        Alert.alert(
+                            'Error',
+                            'Email address already exists'
+                        )
+                    }
                 });
-            console.log('Resgister Successfull !!!');
-            navigation.navigate("LoginScreen");
         } catch (error) {
             console.log(error.toString(error));
         }
     }
 
+
+    /*kiểm tra username tồn tại*/
+    checkUsernameExist = (usernameSub) => {
+        var array = this.state.userExist;
+        for (var i = 0; i < array.length; i++) {
+            if (usernameSub == array[i].username) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*kiểm tra thông tin người dùng nhập vào */
     registerAccount = (emailSub, passwordSub, usernameSub, navigation) => {
         if (usernameSub.length == 0) {
             Alert.alert(
@@ -64,8 +103,14 @@ export default class ButtonSubmitRegister extends Component {
                 'Password length must be between 6 and 32 characters',
             );
         }
+        else if (this.checkUsernameExist(usernameSub) == true) {
+            Alert.alert(
+                'Error',
+                'Username already exists',
+            );
+        }
         else {
-            this.submit(emailSub, passwordSub, navigation);
+            this.submit(emailSub, passwordSub, usernameSub, navigation);
         }
     }
 
