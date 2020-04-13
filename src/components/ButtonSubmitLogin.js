@@ -42,13 +42,13 @@ export default class ButtonSubmitLogin extends Component {
         }
     }
 
-    loginAccount = (navigation, emailLog, passwordLog) => {
+    loginAccount = async (navigation, emailLog, passwordLog) => {
         try {
-            firebase
+            await firebase
                 .auth()
                 .signInWithEmailAndPassword(emailLog, passwordLog)
                 .then(res => {
-                    //console.log(res.user.email);
+                    console.log(JSON.parse(JSON.stringify(res.user)));
                     this.storeData(JSON.stringify(res.user));
                     navigation.navigate('Main',
                         {
