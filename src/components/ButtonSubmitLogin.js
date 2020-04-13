@@ -23,6 +23,7 @@ export default class ButtonSubmitLogin extends Component {
                 userExist: null,
             };
         this.returnUser = this.returnUser.bind(this);
+        this.loginAccount = this.loginAccount.bind(this);
     }
 
 
@@ -34,15 +35,15 @@ export default class ButtonSubmitLogin extends Component {
         }
     }
 
-    getData = async (user) => {
-        try {
-            const userData = await AsyncStorage.getItem('userData');
-            const data = JSON.parse(userData);
-            console.log(data);
-        } catch (e) {
-            console.log("Something went wrong", e);
-        }
-    }
+    // getData = async (user) => {
+    //     try {
+    //         const userData = await AsyncStorage.getItem('userData');
+    //         const data = JSON.parse(userData);
+    //         console.log(data);
+    //     } catch (e) {
+    //         console.log("Something went wrong", e);
+    //     }
+    // }
 
     returnUser = (email) => {
         var array = this.state.userExist;
@@ -56,6 +57,7 @@ export default class ButtonSubmitLogin extends Component {
     }
 
     loginAccount = async (navigation, emailLog, passwordLog) => {
+        console.log(emailLog + '--' + passwordLog);
         try {
             await firebase
                 .auth()
@@ -80,7 +82,7 @@ export default class ButtonSubmitLogin extends Component {
                         )
                     }
                     else {
-                        console.log("sign successfull!")
+                       
                     }
                 });
         } catch (error) {

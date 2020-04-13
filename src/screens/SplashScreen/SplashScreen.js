@@ -12,6 +12,7 @@ import {
 import firebase from '@react-native-firebase/app';
 import bgSrc from '../../assets/images/logo.png';
 import AsyncStorage from "@react-native-community/async-storage";
+import User from '../../components/User';
 
 class SplashScreen extends Component {
     constructor(props) {
@@ -51,7 +52,11 @@ class SplashScreen extends Component {
 
         const data = await this.performTimeConsumingTask();
         if (data !== null) {
-            console.log(data);
+            console.log(JSON.parse(data));
+            /** */
+            User.username = JSON.parse(data).displayName;
+            User.email = JSON.parse(data).email;
+            console.log(User);
             this.props.navigation.navigate('Main');
         }
         else {

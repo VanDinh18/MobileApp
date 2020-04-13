@@ -9,6 +9,12 @@ import {
 import Search from '../../components/Search';
 
 class MessageScreen extends Component{
+    constructor(props){
+        super(props);
+        this.state = {
+            titleUsername: '1',
+        }
+    }
 
     gotoMessage = ()=>{
         this.props.navigation.navigate('ChatScreen');
@@ -25,7 +31,7 @@ class MessageScreen extends Component{
                         onPress={this.gotoMessage}
                     >
                         <Text style={{fontSize: 30}}>
-                            Conversation1
+                           {this.state.titleUsername}
                         </Text>
                     </TouchableOpacity>
                 </View>

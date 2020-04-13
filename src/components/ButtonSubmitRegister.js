@@ -48,6 +48,7 @@ export default class ButtonSubmitRegister extends Component {
     }
 
     submit = async (emailSub, passwordSub, usernameSub, navigation) => {
+        console.log(usernameSub + 'submit')
         try {
             await firebase
                 .auth()
@@ -74,7 +75,9 @@ export default class ButtonSubmitRegister extends Component {
 
     /*kiểm tra username tồn tại*/
     checkUsernameExist = (usernameSub) => {
+        console.log('checkusernameexist')
         var array = this.state.userExist;
+        console.log(array);
         for (var i = 0; i < array.length; i++) {
             if (usernameSub == array[i].username) {
                 return true;
