@@ -2,15 +2,16 @@ import React, {Component} from 'react';
 import {
     View,
     StyleSheet,
-    Dimensions
+    Dimensions,
+    TouchableOpacity,
+    Text
 } from 'react-native';
 import Search from '../../components/Search';
 
 class MessageScreen extends Component{
 
-    gotoMessage = async ()=>{
-        await AsyncStorage.clear;
-        // this.props.navigation.navigate('');
+    gotoMessage = ()=>{
+        this.props.navigation.navigate('ChatScreen');
     }
     
     render(){
@@ -21,7 +22,6 @@ class MessageScreen extends Component{
                 </View>
                 <View>
                     <TouchableOpacity
-                        style={{height: 50, width: 100}}
                         onPress={this.gotoMessage}
                     >
                         <Text style={{fontSize: 30}}>
