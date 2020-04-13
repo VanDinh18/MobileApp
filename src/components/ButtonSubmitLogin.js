@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import firebase from '@react-native-firebase/app';
+import User from '../components/User';
 
 export default class ButtonSubmitLogin extends Component {
     constructor() {
@@ -19,8 +20,9 @@ export default class ButtonSubmitLogin extends Component {
         this.unsubcriber = null,
             this.state = {
                 userData: null,
+                userExist: null,
             };
-
+        this.returnUser = this.returnUser.bind(this);
     }
 
 
@@ -42,19 +44,44 @@ export default class ButtonSubmitLogin extends Component {
         }
     }
 
+    returnUser = (email) => {
+        var array = this.state.userExist;
+        for (var i = 0; i < array.length; i++) {
+            if (email == array[i].email) {
+                User.username = array[i].username;
+                User.email = array[i].email;
+            }
+        }
+        console.log(User);
+    }
+
     loginAccount = async (navigation, emailLog, passwordLog) => {
         try {
             await firebase
                 .auth()
                 .signInWithEmailAndPassword(emailLog, passwordLog)
-                .then(res => {
-                    console.log(JSON.parse(JSON.stringify(res.user)));
-                    this.storeData(JSON.stringify(res.user));
-                    navigation.navigate('Main',
-                        {
-                            itemId: res.user.email,
-                        }
-                    );
+                .then(
+                    res => {
+                        this.returnUser(emailLog);
+                        this.storeData(JSON.stringify(res.user));
+                        navigation.navigate('Main');
+                    })
+                .catch((error) => {
+                    if (error.code == "auth/user-not-found") {
+                        Alert.alert(
+                            'Error',
+                            'email not found'
+                        )
+                    }
+                    else if (error.code == "auth/wrong-password") {
+                        Alert.alert(
+                            'Error',
+                            'password wrong'
+                        )
+                    }
+                    else {
+                        console.log("sign successfull!")
+                    }
                 });
         } catch (error) {
             console.log(error.toString(error));
@@ -66,7 +93,9 @@ export default class ButtonSubmitLogin extends Component {
         this.unsubcriber = firebase.auth().onAuthStateChanged((changedUser) => {
             this.setState({ userData: changedUser });
         });
-        console.log("ComponentDidMount buttonsubmitLogin");
+        firebase.database().ref('/users').on("value", snapshot => {
+            this.setState({ userExist: Object.values(snapshot.val()) });
+        });
     }
 
     componentWillUnmount() {

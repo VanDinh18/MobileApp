@@ -15,7 +15,7 @@ class SettingsScreen extends Component{
     }
 
     logout = async ()=>{
-        await AsyncStorage.clear;
+        await AsyncStorage.clear();
         this.props.navigation.navigate('LoginScreen');
     }
     render(){
