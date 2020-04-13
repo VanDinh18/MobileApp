@@ -29,7 +29,7 @@ class LoginScreen extends Component {
         //setTimeout(()=> console.log(email + '-' + password), 1000);
     }
 
-    render() {
+    render() {  
         return (
             <Wallpaper>
                 <LogoLogin />

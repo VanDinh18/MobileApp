@@ -14,6 +14,10 @@ export default class ChatScreen extends Component {
         
     }
 
+
+    sendMessage =() =>{
+        
+    }
     render() {
         return (
             <View style={styles.wrapper}>
