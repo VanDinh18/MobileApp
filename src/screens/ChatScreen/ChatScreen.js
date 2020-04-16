@@ -29,33 +29,33 @@ export default class ChatScreen extends Component {
     sendMessage = async (titleUsername) => {
         console.log(titleUsername);//người mà mình đang nhắn
         console.log(User.username);//bản thân 
-        if (this.state.textMessage.length > 0) {
-            let msgId = firebase.database().ref('messages').child(User.username).child(titleUsername).push().key;
-            let updates = {};
-            let message = {
-                message: this.state.textMessage,
-                time: firebase.database.ServerValue.TIMESTAMP,
-                from: User.username,
-            }
-            updates['messages/' + User.username + '/' + titleUsername + '/' + msgId] = message;
-            updates['messages/' + titleUsername + '/' + User.username + '/' + msgId] = message;
-            firebase.database().ref().update(updates);
-            this.setState({ textMessage: '' });
-        }
+        // if (this.state.textMessage.length > 0) {
+        //     let msgId = firebase.database().ref('messages').child(User.username).child(titleUsername).push().key;
+        //     let updates = {};
+        //     let message = {
+        //         message: this.state.textMessage,
+        //         time: firebase.database.ServerValue.TIMESTAMP,
+        //         from: User.username,
+        //     }
+        //     updates['messages/' + User.username + '/' + titleUsername + '/' + msgId] = message;
+        //     updates['messages/' + titleUsername + '/' + User.username + '/' + msgId] = message;
+        //     firebase.database().ref().update(updates);
+        //     this.setState({ textMessage: '' });
+        // }
     }
     // sendMessage = async (titleUsername) => {
     //     console.log(titleUsername);
     //     console.log(User.username);
     //     if(this.state.textMessage.length > 0 ){
-    //         let msgId = firebase.database().ref('messages').child('aa').child(titleUsername).push().key;
+    //         let msgId = firebase.database().ref('messages').child('2').child(titleUsername).push().key;
     //         let updates = {};
     //         let message = {
     //             message: this.state.textMessage,
     //             time: firebase.database.ServerValue.TIMESTAMP,
-    //             from: 'aa',
+    //             from: '2',
     //         }
-    //         updates['messages/' + 'aa' + '/' + titleUsername + '/' + msgId] = message;
-    //         updates['messages/' + titleUsername + '/' + 'aa' + '/' + msgId] = message;
+    //         updates['messages/' + '2' + '/' + titleUsername + '/' + msgId] = message;
+    //         updates['messages/' + titleUsername + '/' + '2' + '/' + msgId] = message;
     //         firebase.database().ref().update(updates);
     //         this.setState({textMessage: ''});
     //     }
@@ -64,7 +64,7 @@ export default class ChatScreen extends Component {
         return (
             <View style={styles.wrapper}>
                 <View style={styles.header}>
-                    <Text style={{ fontSize: 30 }}>{params.titleUsername}</Text>
+                    <Text style={{ fontSize: 30 }}>1</Text>
                 </View>
                 <View style={styles.listMessage}>
                     <Text>Listmessage</Text>

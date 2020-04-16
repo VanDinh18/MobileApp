@@ -18,8 +18,9 @@ class SplashScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-
+            userExist: null,
         };
+        this.returnUser = this.returnUser.bind(this);
     }
 
     performTimeConsumingTask = async () => {
@@ -30,6 +31,16 @@ class SplashScreen extends Component {
                 () => { resolve(data) },
                 2000)
         })
+    }
+    returnUser = (email) => {
+        var array = this.state.userExist;
+        for (var i = 0; i < array.length; i++) {
+            if (email == array[i].email) {
+                User.username = array[i].username;
+                User.email = array[i].email;
+            }
+        }
+        console.log(User);
     }
 
     async componentDidMount() {
@@ -50,13 +61,15 @@ class SplashScreen extends Component {
             firebase.initializeApp(firebaseConfig);
         }
 
+        firebase.database().ref('/users').on("value", snapshot => {
+            this.setState({ userExist: Object.values(snapshot.val()) });
+        });
+
         const data = await this.performTimeConsumingTask();
         if (data !== null) {
-            console.log(JSON.parse(data));
+            //console.log(JSON.parse(data));
             /** */
-            User.username = JSON.parse(data).displayName;
-            User.email = JSON.parse(data).email;
-            console.log(User);
+            this.returnUser(JSON.parse(data).email);
             this.props.navigation.navigate('Main');
         }
         else {
