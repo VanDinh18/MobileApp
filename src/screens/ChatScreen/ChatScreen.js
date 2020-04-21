@@ -19,7 +19,11 @@ export default class ChatScreen extends Component {
             textMessage: '',
         }
         this.sendMessage = this.sendMessage.bind(this);
+        this.goback = this.goback.bind(this);
+    }
 
+    goback = (navigation) => {
+        navigation.navigate('MessageScreen');
     }
 
     handleChange = key => val => {
@@ -29,45 +33,34 @@ export default class ChatScreen extends Component {
     sendMessage = async (titleUsername) => {
         console.log(titleUsername);//người mà mình đang nhắn
         console.log(User.username);//bản thân 
-        // if (this.state.textMessage.length > 0) {
-        //     let msgId = firebase.database().ref('messages').child(User.username).child(titleUsername).push().key;
-        //     let updates = {};
-        //     let message = {
-        //         message: this.state.textMessage,
-        //         time: firebase.database.ServerValue.TIMESTAMP,
-        //         from: User.username,
-        //     }
-        //     updates['messages/' + User.username + '/' + titleUsername + '/' + msgId] = message;
-        //     updates['messages/' + titleUsername + '/' + User.username + '/' + msgId] = message;
-        //     firebase.database().ref().update(updates);
-        //     this.setState({ textMessage: '' });
-        // }
+        if (this.state.textMessage.length > 0) {
+            var msgId = firebase.database().ref('messages').child(User.username).child(titleUsername).push().key;
+            var updates = {};
+            var message = {
+                message: this.state.textMessage,
+                time: firebase.database.ServerValue.TIMESTAMP,
+                from: User.username,
+            }
+            updates['messages/' + User.username + '/' + titleUsername + '/' + msgId] = message;
+            updates['messages/' + titleUsername + '/' + User.username + '/' + msgId] = message;
+            await firebase.database().ref().update(updates);
+            this.setState({ textMessage: '' });
+        }
     }
-    // sendMessage = async (titleUsername) => {
-    //     console.log(titleUsername);
-    //     console.log(User.username);
-    //     if(this.state.textMessage.length > 0 ){
-    //         let msgId = firebase.database().ref('messages').child('2').child(titleUsername).push().key;
-    //         let updates = {};
-    //         let message = {
-    //             message: this.state.textMessage,
-    //             time: firebase.database.ServerValue.TIMESTAMP,
-    //             from: '2',
-    //         }
-    //         updates['messages/' + '2' + '/' + titleUsername + '/' + msgId] = message;
-    //         updates['messages/' + titleUsername + '/' + '2' + '/' + msgId] = message;
-    //         firebase.database().ref().update(updates);
-    //         this.setState({textMessage: ''});
-    //     }
-    // }
+
     render() {
+        const { params } = this.props.navigation.state;
+        const { navigation } = this.props;
+
         return (
             <View style={styles.wrapper}>
+                <TouchableOpacity
+                    onPress={() => this.goback(navigation)}
+                >
+                    <Text>goback</Text>
+                </TouchableOpacity>
                 <View style={styles.header}>
-                    <Text style={{ fontSize: 30 }}>1</Text>
-                </View>
-                <View style={styles.listMessage}>
-                    <Text>Listmessage</Text>
+                    <Text style={{ fontSize: 30 }}>{params.name}</Text>
                 </View>
                 <View style={styles.wrapperInputMessage}>
                     <TextInput
@@ -77,7 +70,7 @@ export default class ChatScreen extends Component {
                         onChangeText={this.handleChange('textMessage')}
                     />
                     <TouchableOpacity
-                        onPress={() => this.sendMessage('1')}
+                        onPress={() => this.sendMessage(params.name)}
                     >
                         <Text style={{ fontSize: 30 }}>
                             Send
@@ -99,9 +92,6 @@ const styles = StyleSheet.create({
     },
     header: {
         height: 30,
-
-    },
-    listMessage: {
 
     },
     wrapperInputMessage: {
