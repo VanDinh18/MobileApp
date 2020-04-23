@@ -54,7 +54,7 @@ export default class FormLogin extends Component {
 
     render() {
         return (
-            <KeyboardAvoidingView behavior="padding" style={styles.container}>
+            <View style={styles.container}>
                 <UserInputLogin
                     source={usernameImg}
                     placeholder="Email"
@@ -78,7 +78,7 @@ export default class FormLogin extends Component {
                     onPress={this.showPass}>
                     <Image source={eyeImg} style={styles.iconEye} />
                 </TouchableOpacity>
-            </KeyboardAvoidingView>
+            </View>
         );
     }
 }

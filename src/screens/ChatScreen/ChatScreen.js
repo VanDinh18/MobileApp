@@ -8,6 +8,7 @@ import {
     TouchableOpacity,
     Image,
     FlatList,
+    KeyboardAvoidingView,
 } from 'react-native';
 
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
@@ -114,7 +115,7 @@ export default class ChatScreen extends Component {
                 </View>
 
 
-                <View style={styles.bodyMessage}>
+                <KeyboardAvoidingView style={styles.bodyMessage}>
                     <FlatList
                         data={this.state.Data}
                         renderItem={({ item }) => (
@@ -124,7 +125,7 @@ export default class ChatScreen extends Component {
                         )}
                         keyExtractor={(item, index) => index.toString()}
                     />
-                </View>
+                </KeyboardAvoidingView>
 
                 <View style={styles.wrapperInputMessage}>
                     <TextInput

@@ -6,14 +6,16 @@ import {
     TouchableOpacity,
     TextInput,
     StyleSheet,
+    KeyboardAvoidingView,
 } from 'react-native';
-
-
 import Wallpaper from '../../components/Wallpaper';
 import LogoLogin from '../../components/LogoLogin';
 import FormLogin from '../../components/FormLogin';
 import SignUpSectionLogin from '../../components/SignupSectionLogin';
 import ButtonSubmitLogin from '../../components/ButtonSubmitLogin';
+
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+
 class LoginScreen extends Component {
     constructor(props) {
         super(props);
@@ -29,7 +31,7 @@ class LoginScreen extends Component {
         //setTimeout(()=> console.log(email + '-' + password), 1000);
     }
 
-    render() {  
+    render() {
         return (
             <Wallpaper>
                 <LogoLogin />

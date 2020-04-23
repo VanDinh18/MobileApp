@@ -12,7 +12,7 @@ import Search from '../../components/Search';
 import '@react-native-firebase/database';
 import firebase from '@react-native-firebase/app';
 import User from '../../components/User';
-import ItemFlatList from '../../components/ItemFlatList';
+import ItemFlatListFriend from '../../components/ItemFlatListFriend';
 
 class MessageScreen extends Component {
     constructor(props) {
@@ -21,9 +21,6 @@ class MessageScreen extends Component {
             DATA: [],
         }
     }
-
-
-
 
     async componentDidMount() {
         var arr = [];
@@ -53,7 +50,7 @@ class MessageScreen extends Component {
                     <FlatList
                         data={this.state.DATA}
                         renderItem={({ item }) => (
-                            <ItemFlatList
+                            <ItemFlatListFriend
                                 title={item.title}
                                 navigation={this.props.navigation}
                             />

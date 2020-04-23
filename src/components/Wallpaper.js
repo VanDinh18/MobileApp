@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { StyleSheet, Image, ImageBackground } from "react-native";
 import bgSrc from '../assets/images/wallpaper.png'
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 
 
