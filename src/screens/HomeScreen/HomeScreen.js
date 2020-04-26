@@ -1,20 +1,26 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
     View,
     Text,
-}from 'react-native';
+    TouchableOpacity,
+} from 'react-native';
 
-class HomeScreen extends Component{
-    constructor(props){
+class HomeScreen extends Component {
+    constructor(props) {
         super(props);
-        this.state={
-            
+        this.state = {
+
         }
     }
-    render(){
-        return(
+    render() {
+        return (
             <View>
-               <Text>HomeScreen</Text>
+                <TouchableOpacity
+                    onPress={() => this.props.navigation.navigate('ChatSettingScreen')}
+                >
+                    <Text>HomeScreen</Text>
+                </TouchableOpacity>
+
             </View>
         );
     }

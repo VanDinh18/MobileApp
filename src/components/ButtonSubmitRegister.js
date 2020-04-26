@@ -44,6 +44,7 @@ export default class ButtonSubmitRegister extends Component {
         firebase.database().ref('users/' + username).set({
             email: email,
             username: username,
+            avatar: 'https://imgur.com/dFWfVh5.png',
         });
     }
 

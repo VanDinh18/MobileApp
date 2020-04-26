@@ -5,6 +5,7 @@ import RegisterScreen from '../screens/RegisterScreen/RegisterScreen';
 import SplashScreen from '../screens/SplashScreen/SplashScreen';
 import HomeScreen from '../screens/HomeScreen/HomeScreen';
 import ChatScreen from '../screens/ChatScreen/ChatScreen';
+import ChatSettingScreen from '../screens/ChatSettingScreen/ChatSettingScreen';
 import TabNavigator from './TabNavigator';
 
 
@@ -14,8 +15,11 @@ const AppNavigator = createSwitchNavigator(
         LoginScreen: { screen: LoginScreen },
         RegisterScreen: { screen: RegisterScreen },
         HomeScreen: { screen: HomeScreen },
-        ChatScreen: { screen: ChatScreen },
+       
         Main: TabNavigator,
+
+        ChatScreen: { screen: ChatScreen },
+        ChatSettingScreen: {screen: ChatSettingScreen},
     },
     {
         initialRouteName: 'SplashScreen',

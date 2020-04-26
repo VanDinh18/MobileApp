@@ -11,13 +11,13 @@ import {
     KeyboardAvoidingView,
 } from 'react-native';
 
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/auth';
 import '@react-native-firebase/database';
 import User from '../../components/User';
-import img from '../../assets/images/goback.png';
-import avatarImg from '../../assets/images/avatar.jpg';
+import goback from '../../assets/images/goback.png';
+import smallcircle from '../../assets/images/smallcircle.png';
 import ItemFlatListMessage from '../../components/ItemFlatListMessage';
 
 export default class ChatScreen extends Component {
@@ -27,24 +27,28 @@ export default class ChatScreen extends Component {
             textMessage: '',
             Data: [],
             person: {
-                name: props.navigation.state.params.name
+                name: props.navigation.state.params.name,
+                avatar: props.navigation.state.params.avatar,
             },
         }
         this.sendMessage = this.sendMessage.bind(this);
         this.goback = this.goback.bind(this);
+        this.gotoChatSettingScreen = this.gotoChatSettingScreen.bind(this);
     }
 
-    goback = (navigation) => {
+    goback(navigation) {
         navigation.navigate('MessageScreen');
+    }
+
+    gotoChatSettingScreen(navigation) {
+        navigation.navigate('ChatSettingScreen', { name: this.state.person.name, avatar: this.state.person.avatar });
     }
 
     handleChange = key => val => {
         this.setState({ [key]: val });
     }
 
-    sendMessage = async (titleUsername) => {
-        console.log(titleUsername);//người mà mình đang nhắn
-        console.log(User.username);//bản thân 
+    async sendMessage(titleUsername) {
         if (this.state.textMessage.length > 0) {
             var msgId = firebase.database().ref('messages').child(User.username).child(titleUsername).push().key;
             var updates = {};
@@ -70,11 +74,11 @@ export default class ChatScreen extends Component {
                 })
             })
     }
+
     render() {
         const { navigation } = this.props;
         return (
             <View style={styles.wrapper}>
-
                 <View style={styles.header}>
                     <TouchableOpacity
                         onPress={() => this.goback(navigation)}
@@ -86,8 +90,8 @@ export default class ChatScreen extends Component {
                         }}
                     >
                         <Image
-                            style={{ height: 20, width: 20, tintColor: 'white'}}
-                            source={img}
+                            style={{ height: 20, width: 20, tintColor: 'white' }}
+                            source={goback}
                         />
                     </TouchableOpacity>
                     <View
@@ -100,17 +104,24 @@ export default class ChatScreen extends Component {
                     >
                         <View style={{ flex: 1 }}>
                             <Image
-                                style={{height: 50, width: 50, borderRadius: 50, alignItems: 'center', justifyContent: 'center' }}
-                                source={avatarImg}
+                                style={{ height: 50, width: 50, borderRadius: 50, alignItems: 'center', justifyContent: 'center' }}
+                                source={this.state.person.avatar ? { uri: this.state.person.avatar } : null}
                             />
                         </View>
                         <View style={{ flex: 4 }}>
-                            <Text style={{ fontSize: 24, color: 'white'}}>{this.state.person.name}</Text>
+                            <Text style={{ fontSize: 24, color: 'white' }}>{this.state.person.name}</Text>
                         </View>
 
                     </View>
-                    <View style={{ flex: 1,}}>
-
+                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <TouchableOpacity
+                            onPress={() => this.gotoChatSettingScreen(navigation)}
+                        >
+                            <Image
+                                style={{ height: 30, width: 30, tintColor: 'white' }}
+                                source={smallcircle}
+                            />
+                        </TouchableOpacity>
                     </View>
                 </View>
 
