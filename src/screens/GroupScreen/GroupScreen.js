@@ -13,9 +13,8 @@ import {
 import '@react-native-firebase/database';
 import firebase from '@react-native-firebase/app';
 import User from '../../components/User';
-import Search from '../../components/Search';
-import ItemFlatListGroup from '../../components/ItemFlatListGroup';
 
+import ItemFlatListGroup from '../../components/ItemFlatListGroup';
 
 
 class GroupScreen extends Component {
@@ -56,17 +55,12 @@ class GroupScreen extends Component {
         return (
             <View style={styles.container}>
                 <View style={styles.wrapperSearch}>
-                    <Search />
+                    
                 </View>
                 <View style={styles.addGroup}>
                     <TouchableOpacity
                         style={{
                             backgroundColor: '#e6e6e6',
-                            height: 70,
-                            width: 70,
-                            borderRadius: 50,
-                            justifyContent: 'center',
-                            alignItems: 'center',
                         }}
                         onPress={() => this.gotoCreateNewGroup()}
                     >
@@ -74,6 +68,7 @@ class GroupScreen extends Component {
                             style={{ height: 50, width: 50, tintColor: '#1a8cff' }}
                             source={require('../../assets/images/channel-add.png')}
                         />
+                        <Text style={{fontSize: 20,}}>Tạo nhóm mới</Text>
                     </TouchableOpacity>
                 </View>
                 <SafeAreaView style={styles.list}>
@@ -112,8 +107,6 @@ const styles = StyleSheet.create({
     },
     addGroup: {
         flex: 2,
-        justifyContent: 'center',
-        marginLeft: 10,
     },
     list: {
         flex: 13,
