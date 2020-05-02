@@ -6,7 +6,8 @@ import {
     TouchableOpacity,
     Text,
     FlatList,
-    SafeAreaView
+    SafeAreaView,
+    Image,
 } from 'react-native';
 import Search from '../../components/Search';
 import '@react-native-firebase/database';

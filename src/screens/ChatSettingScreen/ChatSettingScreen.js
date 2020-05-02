@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     option: {
-        
+
     }
 })
 
