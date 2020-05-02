@@ -15,7 +15,6 @@ import firebase from '@react-native-firebase/app';
 import User from '../../components/User';
 import ItemFlatListFriend from '../../components/ItemFlatListFriend';
 
-var message_firebase = firebase.database().ref('messages');
 
 class MessageScreen extends Component {
     constructor(props) {
@@ -51,6 +50,7 @@ class MessageScreen extends Component {
     async loadUser(){
         var arr = [];
         var i = 0;
+        var message_firebase = firebase.database().ref('messages');
         var newRoot = message_firebase.child(User.username);
         await newRoot.once('value', function (snapshot) {
             snapshot.forEach(function (childs) {
