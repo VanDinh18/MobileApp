@@ -7,31 +7,21 @@ import {
     Image,
     TouchableOpacity
 } from 'react-native';
-import firebase from '@react-native-firebase/app';
 
 export default class Search extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            valueSearch: ''
-        }
+        this.state = { valueSearch: '' }
     }
 
-    searchFromFirebase(text) {
-        let self = this
-        firebase.database().ref('/users').orderByChild("username").startAt(text).endAt(text + "\uf8ff").once('value', snapshot => {
-            self.props.searchingCb(Object.values(snapshot.val()));
-        })
-        this.setState({
-            valueSearch:text
-        })
+    async searching(text) {
+        this.setState({ valueSearch: text})
+        await this.props.searchingCb(text);
     }
 
     clickCloseSearch(){
+        this.setState({ valueSearch:'' })
         this.props.closeSearch();
-        this.setState({
-            valueSearch:''
-        })
     }
 
     render() {
@@ -44,7 +34,7 @@ export default class Search extends Component {
                     placeholderTextColor="gray"
                     value={this.state.valueSearch}
                     onChangeText={
-                        (text) => { this.searchFromFirebase(text) }
+                        (text) => { this.searching(text) }
                     }
                 />
                 <TouchableOpacity onPress={this.clickCloseSearch.bind(this)} style={styles.wrapperDelete}>

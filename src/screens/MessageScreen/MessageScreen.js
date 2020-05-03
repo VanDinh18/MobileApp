@@ -15,10 +15,12 @@ import firebase from '@react-native-firebase/app';
 import User from '../../components/User';
 import ItemFlatListFriend from '../../components/ItemFlatListFriend';
 
-
 class MessageScreen extends Component {
     constructor(props) {
         super(props);
+        this.searchResult = []
+        this.listContact = []
+        this.isFetching = false
         this.state = {
             DATA: [],
             searchResult: [],
@@ -28,23 +30,51 @@ class MessageScreen extends Component {
     }
 
     async componentDidMount() {
+        try{
+            await this.loadUser();
+        }catch(err) {console.log('err: ' + err)}
+    }
+
+    clickUserSearched(username, avatarImg) {
+        this.props.navigation.navigate('ChatScreen', { name: username, avatar: avatarImg });
+    }
+
+    closeSearch() {
+        this.setState({ searching: false })
+    }
+
+    onRefresh() {
         this.loadUser();
     }
 
-    clickUserSearched(){
-
-    }
-
-    searching(searchResult){
-        this.setState({ searching: true, searchResult: searchResult})
-    }
-
-    closeSearch(){
-        this.setState({searching: false})
-    }
-
-    onRefresh(){
-        this.loadUser();    
+    searching(text) {
+        if(text == ""){
+            this.setState({searching: false})
+            return;
+        }
+        let self = this
+        self.searchResult = []
+        return new Promise((resolve, reject) => {
+            firebase.database().ref('/users').orderByChild("username").startAt(text).endAt(text + "\uf8ff").once('value', snapshot => {
+                if(snapshot.val() == null){
+                    self.searchResult.push({id: "-1", notfound: true});
+                }else{
+                    let i = 0;
+                    Object.values(snapshot.val()).forEach(function (user) {
+                        var item = {
+                            id: i,
+                            avatar: user["avatar"],
+                            email: user["email"],
+                            username: user["username"]
+                        };
+                        self.searchResult.push(item);
+                        i++;
+                    })
+                }
+                self.setState({ searching: true })
+                resolve();
+            })
+        })
     }
 
     async loadUser(){
@@ -62,23 +92,30 @@ class MessageScreen extends Component {
                 i++;
             })
         })
-        this.setState({ DATA: arr, isFetching: false });
+        this.isFetching = false
+        this.setState({ DATA: arr });
     }
 
-    renderSearchResult() {
+
+
+
+    renderUser(user) {
+        if (this.state.searching && user["item"]["notfound"]) {
+            return (
+                <Text style={{fontSize: 20, margin: 10}}>Không tìm thấy</Text>
+            )
+        }else if (this.state.searching) {
+            return (
+                <TouchableOpacity onPress={this.clickUserSearched.bind(this, user["item"]["username"], user["item"]["avatar"])}>
+                    <Text style={styles.userBasic}>{user["item"]["username"]}</Text>
+                </TouchableOpacity>
+            )
+        }
         return (
-            <View>
-                <Text style={styles.title}>Kết quả tìm kiếm</Text>
-                <FlatList
-                        data={this.state.searchResult}
-                        renderItem={({ item }) => (
-                            <TouchableOpacity onPress={this.clickUserSearched()}>
-                                <Text style={{fontSize:17, marginLeft: 10, marginBottom: 5}}>{item.username}</Text>
-                            </TouchableOpacity>
-                        )}
-                        keyExtractor={(item) => item.email}
-                    />
-            </View>
+            <ItemFlatListFriend
+                title={user["item"]["title"]}
+                navigation={this.props.navigation}
+            />
         )
     }
 
@@ -86,22 +123,15 @@ class MessageScreen extends Component {
         return (
             <View style={styles.container}>
                 <View style={styles.wrapperSearch}>
-                    <Search searchingCb={this.searching.bind(this)} closeSearch={this.closeSearch.bind(this)}/>
+                    <Search searchingCb={this.searching.bind(this)} closeSearch={this.closeSearch.bind(this)} />
                 </View>
                 <SafeAreaView style={styles.list}>
-                    {this.state.searching ? this.renderSearchResult() : null}
-                    <Text style={styles.title}>Tin nhắn</Text>
                     <FlatList
-                        data={this.state.DATA}
-                        renderItem={({ item }) => (
-                            <ItemFlatListFriend
-                                title={item.title}
-                                navigation={this.props.navigation}
-                            />
-                        )}
+                        data={this.state.searching ? this.searchResult : this.state.DATA}
+                        renderItem={this.renderUser.bind(this)}
                         keyExtractor={(item) => item.id.toString()}
                         onRefresh={() => this.onRefresh()}
-                        refreshing={this.state.isFetching}
+                        refreshing={this.isFetching}
                     />
                 </SafeAreaView>
             </View>
@@ -131,6 +161,10 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 20,
         fontWeight: "bold"
+    },
+    userBasic: {
+        fontSize: 20,
+        margin: 10,
     }
 })
 
