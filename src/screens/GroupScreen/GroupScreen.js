@@ -13,7 +13,7 @@ import {
 import '@react-native-firebase/database';
 import firebase from '@react-native-firebase/app';
 import User from '../../components/User';
-
+import addfriend from '../../assets/images/addfriend.png';
 import ItemFlatListGroup from '../../components/ItemFlatListGroup';
 
 
@@ -55,22 +55,9 @@ class GroupScreen extends Component {
         return (
             <View style={styles.container}>
                 <View style={styles.wrapperSearch}>
-                    
+
                 </View>
-                <View style={styles.addGroup}>
-                    <TouchableOpacity
-                        style={{
-                            backgroundColor: '#e6e6e6',
-                        }}
-                        onPress={() => this.gotoCreateNewGroup()}
-                    >
-                        <Image
-                            style={{ height: 50, width: 50, tintColor: '#1a8cff' }}
-                            source={require('../../assets/images/channel-add.png')}
-                        />
-                        <Text style={{fontSize: 20,}}>Tạo nhóm mới</Text>
-                    </TouchableOpacity>
-                </View>
+
                 <SafeAreaView style={styles.list}>
                     <FlatList
                         data={this.state.DATA}
@@ -85,6 +72,15 @@ class GroupScreen extends Component {
                         )}
                         keyExtractor={(item) => item.id.toString()}
                     />
+                    <TouchableOpacity
+                        onPress={()=>this.gotoCreateNewGroup()}
+                        style={{alignSelf: 'flex-end', marginRight: 30, marginBottom: 30}}
+                    >
+                        <Image
+                            style={{ width: 50, height: 50 }}
+                            source={addfriend}
+                        />
+                    </TouchableOpacity>
                 </SafeAreaView>
             </View>
         );
@@ -105,11 +101,8 @@ const styles = StyleSheet.create({
         paddingTop: 10,
         backgroundColor: '#5a94f2',
     },
-    addGroup: {
-        flex: 2,
-    },
     list: {
-        flex: 13,
+        flex: 15,
     }
 })
 export default GroupScreen;

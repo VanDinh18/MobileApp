@@ -5,9 +5,15 @@ import {
     TouchableOpacity,
     StyleSheet,
     TextInput,
+    KeyboardAvoidingView,
+    FlatList,
+    Image,
 } from 'react-native';
 import firebase from '@react-native-firebase/app';
 import User from '../../components/User';
+import ItemFlatListMessage from '../../components/ItemFlatListMessage';
+import goback from '../../assets/images/goback.png';
+import smallcircle from '../../assets/images/smallcircle.png';
 
 class MultiChatScreen extends Component {
     constructor(props) {
@@ -24,13 +30,24 @@ class MultiChatScreen extends Component {
         };
         this.goback = this.goback.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
-
+        this.gotoMultiChatSettingScreen = this.gotoMultiChatSettingScreen.bind(this);
     }
     handleChange = key => val => {
         this.setState({ [key]: val });
     }
     goback(navigation) {
         navigation.navigate('GroupScreen');
+    }
+    gotoMultiChatSettingScreen(navigation) {
+        navigation.navigate(
+            'MultiChatSettingScreen',
+            {
+                chatkey: this.state.group.chatkey,
+                members: this.state.group.members,
+                groupname: this.state.group.groupname,
+                content: this.state.group.content,
+            }
+        )
     }
     sendMessage() {
         if (this.state.textMessage.length > 0) {
@@ -45,17 +62,23 @@ class MultiChatScreen extends Component {
             for (var i = 0; i < this.state.group.members.length; i++) {
                 updates['groups/' + this.state.group.members[i] + '/' + this.state.group.chatkey + '/' + 'content' + '/' + msgId] = message;
             }
-            // updates['groups/' + User.username + '/' + this.state.group.chatkey + '/' + 'content' + '/' + msgId] = message;
-            // updates['groups/' + 'vuduy' + '/' + this.state.group.chatkey + '/' + 'content' + '/' + msgId] = message;
-            // updates['groups/' + 'nguyendinh' + '/' + this.state.group.chatkey + '/' + 'content' + '/' + msgId] = message;
             firebase.database().ref().update(updates);
-
-
             this.setState({ textMessage: '' });
         }
     }
     componentDidMount() {
-
+        var Root = firebase.database().ref('groups').child(User.username);
+        var newRoot = Root.child(this.state.group.chatkey).child('content');
+        newRoot.on('child_added', (value) => {
+            this.setState((prevState) => {
+                return {
+                    Data: [...prevState.Data, value.val()]
+                }
+            })
+        })
+    }
+    componentWillUnmount(){
+        
     }
     render() {
         const { navigation } = this.props;
@@ -64,13 +87,59 @@ class MultiChatScreen extends Component {
                 <View style={styles.header}>
                     <TouchableOpacity
                         onPress={() => this.goback(navigation)}
+                        style={{
+                            flex: 1,
+                            justifyContent: 'center',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                        }}
                     >
-                        <Text>goback</Text>
+                        <Image
+                            style={{ height: 20, width: 20, tintColor: 'white' }}
+                            source={goback}
+                        />
                     </TouchableOpacity>
-                </View>
-                <View style={styles.bodyMessage}>
+                    <View
+                        style={{
+                            flex: 5,
+                            flexDirection: 'row',
+                            alignItems: 'center',
 
+                        }}
+                    >
+                        <View style={{ flex: 1 }}>
+                            <Image
+                                style={{ height: 50, width: 50, borderRadius: 50, alignItems: 'center', justifyContent: 'center' }}
+
+                            />
+                        </View>
+                        <View style={{ flex: 4 }}>
+                            <Text style={{ fontSize: 24, color: 'white' }}>{this.state.group.groupname}</Text>
+                        </View>
+
+                    </View>
+                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <TouchableOpacity
+                            onPress={() => this.gotoMultiChatSettingScreen(navigation)}
+                        >
+                            <Image
+                                style={{ height: 30, width: 30, tintColor: 'white' }}
+                                source={smallcircle}
+                            />
+                        </TouchableOpacity>
+                    </View>
                 </View>
+                <KeyboardAvoidingView style={styles.bodyMessage}>
+                    <FlatList
+                        data={this.state.Data}
+                        renderItem={({ item }) => (
+                            <ItemFlatListMessage
+                                item={item}
+                            />
+                        )}
+                        keyExtractor={(item, index) => index.toString()}
+                    />
+                </KeyboardAvoidingView>
                 <View style={styles.wrapperInputMessage}>
                     <TextInput
                         style={styles.inputMessage}

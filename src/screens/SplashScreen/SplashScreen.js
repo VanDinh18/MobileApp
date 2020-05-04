@@ -32,7 +32,7 @@ class SplashScreen extends Component {
                 2000)
         })
     }
-    returnUser = (email) => {
+    returnUser(email){
         var array = this.state.userExist;
         for (var i = 0; i < array.length; i++) {
             if (email == array[i].email) {
