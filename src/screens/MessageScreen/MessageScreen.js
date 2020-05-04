@@ -121,11 +121,11 @@ class MessageScreen extends Component {
 
     render() {
         return (
-            <View style={styles.container}>
+            <SafeAreaView style={styles.container} >
                 <View style={styles.wrapperSearch}>
                     <Search searchingCb={this.searching.bind(this)} closeSearch={this.closeSearch.bind(this)} />
                 </View>
-                <SafeAreaView style={styles.list}>
+                <View style={styles.list}>
                     <FlatList
                         data={this.state.searching ? this.searchResult : this.state.DATA}
                         renderItem={this.renderUser.bind(this)}
@@ -133,8 +133,8 @@ class MessageScreen extends Component {
                         onRefresh={() => this.onRefresh()}
                         refreshing={this.isFetching}
                     />
-                </SafeAreaView>
-            </View>
+                </View>
+            </SafeAreaView>
         );
     }
 }
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
     },
     wrapperSearch: {
-        flex: 1,
+        height: 55,
         width: DEVICE_WIDTH,
         paddingBottom: 10,
         paddingTop: 10,
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#5a94f2',
     },
     list: {
-        flex: 15,
+        flex: 1,
     },
     title: {
         fontSize: 20,
