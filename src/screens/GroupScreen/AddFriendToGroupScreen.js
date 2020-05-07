@@ -27,14 +27,15 @@ class AddFriendToGroupScreen extends Component {
             Data: [],
             searchData: [],
             isSelected: [],
+            avatar: '',
             isFocusedGroupname: false,
             isFocusedSearchBar: false,
             show: false,
-            avatar: '',
         }
         this.submit = this.submit.bind(this);
         this.filterSearch = this.filterSearch.bind(this);
         this.selectMembers = this.selectMembers.bind(this);
+        this.deleteMembers = this.deleteMembers.bind(this);
     }
     handleText = key => val => {
         this.setState({ [key]: val })
@@ -83,13 +84,28 @@ class AddFriendToGroupScreen extends Component {
         this.setState({ searchData: newData })
     }
 
+    deleteMembers(item) {
+        this.setState((prevState) => {
+            return {
+                Data: [...prevState.Data, item],
+                searchData: [...prevState.searchData, item]
+            }
+        });
+        this.setState({
+            isSelected: this.state.isSelected.filter(e => e.id != item.id)
+        });
+        console.log(this.state.isSelected.length);
+        if (this.state.isSelected.length <= 1) {
+            this.setState({ show: false });
+        }
+    }
     selectMembers(item) {
         this.setState((prevState) => {
             return {
                 isSelected: [...prevState.isSelected, item]
             }
         });
-        if (this.state.isSelected.length > 0) {
+        if (this.state.isSelected.length >= 0) {
             this.setState({ show: true });
         }
         this.setState({
@@ -157,6 +173,9 @@ class AddFriendToGroupScreen extends Component {
             console.error(error);
         }
     }
+    componentWillUnmount() {
+
+    }
     render() {
         const { onFocus, onBlur, ...otherProps } = this.props;
         return (
@@ -209,26 +228,29 @@ class AddFriendToGroupScreen extends Component {
                         onChangeText={this.handleText('groupname')}
                         value={this.state.groupname} />
                 </View>
-                {/* <View style={[styles.listFriendIsSelected, this.state.show ? { flex: 1.2 } : null]}> */}
-                    {/* {this.state.show ? ( */}
-                <View style={styles.listFriendIsSelected}>
-                    <FlatList
-                        data={this.state.isSelected}
-                        renderItem={({ item }) => (
-                            <View style={{width: 50, marginLeft: 10}}>
-                                <TouchableOpacity>
-                                    <Image
-                                        style={{ height: 38, width: 38, borderRadius: 50 }}
-                                        source={item.avatar ? { uri: item.avatar } : null} />
-                                    <Text>{item.title}</Text>
-                                </TouchableOpacity>
-                            </View>
 
-                        )}
-                        keyExtractor={(item) => item.id.toString()}
-                        horizontal={true} />
-                    {/* ) : null} */}
-                </View>
+                {
+                    this.state.show ?
+                        <View style={styles.listFriendIsSelected}>
+                            <FlatList
+                                data={this.state.isSelected}
+                                renderItem={({ item }) => (
+                                    <View style={{ width: DEVICE_WIDTH / 5, marginTop: 10 }}>
+                                        <TouchableOpacity
+                                            onPress={() => this.deleteMembers(item)}
+                                            style={{ alignItems: 'center', flex: 1, flexDirection: 'column' }} >
+                                            <Image
+                                                style={{ height: 38, width: 38, borderRadius: 50 }}
+                                                source={item.avatar ? { uri: item.avatar } : null} />
+                                            <Text>{item.title}</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                )}
+                                keyExtractor={(item) => item.id.toString()}
+                                horizontal={true} />
+                        </View>
+                        : null
+                }
 
                 <View style={styles.searchBar}>
                     <Image
@@ -257,7 +279,6 @@ class AddFriendToGroupScreen extends Component {
                         value={this.state.friend}
                     />
                 </View>
-
                 <View style={styles.listFriendWillSelect}>
                     <FlatList
                         data={this.state.searchData}
@@ -270,7 +291,7 @@ class AddFriendToGroupScreen extends Component {
                                     <Image
                                         style={{ height: 38, width: 38, borderRadius: 50 }}
                                         source={item.avatar ? { uri: item.avatar } : null} />
-                                    <Text style={{ marginLeft: 10, fontSize: 16 }}>{item.title}</Text>
+                                    <Text style={{ marginLeft: 10, fontSize: 14 }}>{item.title}</Text>
                                 </TouchableOpacity>
                             </View>
                         )}
@@ -300,7 +321,7 @@ const styles = StyleSheet.create({
     listFriendIsSelected: {
         flex: 1.2,
         flexDirection: 'row',
-        backgroundColor: '#b3d1ff'
+        backgroundColor: '#cce6ff'
     },
     searchBar: {
         flex: 1,
