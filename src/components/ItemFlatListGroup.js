@@ -19,29 +19,30 @@ class ItemFlatListGroup extends Component {
         this.gotoMultiChatScreen = this.gotoMultiChatScreen.bind(this);
     }
 
-    gotoMultiChatScreen(navigation, chatkey, members, groupname, content) {
+    gotoMultiChatScreen(navigation, chatkey, members, groupname, groupavatar, content) {
         navigation.navigate(
             'MultiChatScreen',
             {
                 chatkey: chatkey,
                 members: members,
                 groupname: groupname,
+                groupavatar: groupavatar,
                 content: content
             }
         );
     }
     render() {
-        const { chatkey, members, groupname, navigation, content } = this.props;
+        const { chatkey, members, groupname, groupavatar, navigation, content } = this.props;
         return (
             <View style={{ flex: 1 }}>
                 <TouchableOpacity
                     style={styles.container}
-                    onPress={() => this.gotoMultiChatScreen(navigation, chatkey, members, groupname, content)}
+                    onPress={() => this.gotoMultiChatScreen(navigation, chatkey, members, groupname, groupavatar, content)}
                 >
                     <View style={styles.avatar}>
                         <Image
                             style={{ height: 50, width: 50, borderRadius: 50 }}
-                            source={avatarImg}
+                            source={groupavatar ? { uri: groupavatar } : null}
                         />
                     </View>
                     <View style={styles.title}>

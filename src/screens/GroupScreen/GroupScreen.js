@@ -45,6 +45,7 @@ class GroupScreen extends Component {
                 var item = {
                     id: i,
                     key: childs.key,
+                    groupavatar: childs.val().groupavatar,
                     groupname: childs.val().groupname,
                     members: childs.val().members,
                     content: childs.val().content,
@@ -70,6 +71,7 @@ class GroupScreen extends Component {
                             <ItemFlatListGroup
                                 chatkey={item.key}
                                 groupname={item.groupname}
+                                groupavatar={item.groupavatar}
                                 members={item.members}
                                 content={item.content}
                                 navigation={this.props.navigation}

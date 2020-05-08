@@ -55,7 +55,7 @@ class AddFriendToGroupScreen extends Component {
             firebase.database().ref('groups/').child(User.username).push({
                 groupname: groupname,
                 members: members,
-                groupavatar: 'https://imgur.com/BqHK8v2.png',
+                groupavatar: 'https://imgur.com/VkvLI8R.png',
             });
             var Root = firebase.database().ref('groups/').child(User.username);
             var key = '';
@@ -70,7 +70,7 @@ class AddFriendToGroupScreen extends Component {
                 firebase.database().ref('groups/').child(members[i]).child(key).set({
                     groupname: groupname,
                     members: members,
-                    groupavatar: 'https://imgur.com/BqHK8v2.png',
+                    groupavatar: 'https://imgur.com/VkvLI8R.png',
                 });
             }
             this.props.navigation.navigate('GroupScreen');

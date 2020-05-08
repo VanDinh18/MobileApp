@@ -25,6 +25,7 @@ class MultiChatScreen extends Component {
                 chatkey: props.navigation.state.params.chatkey,
                 members: props.navigation.state.params.members,
                 groupname: props.navigation.state.params.groupname,
+                groupavatar: props.navigation.state.params.groupavatar,
                 content: props.navigation.state.params.content,
             }
         };
@@ -45,6 +46,7 @@ class MultiChatScreen extends Component {
                 chatkey: this.state.group.chatkey,
                 members: this.state.group.members,
                 groupname: this.state.group.groupname,
+                groupavatar: this.state.group.groupavatar,
                 content: this.state.group.content,
             }
         )
@@ -77,8 +79,8 @@ class MultiChatScreen extends Component {
             })
         })
     }
-    componentWillUnmount(){
-        
+    componentWillUnmount() {
+
     }
     render() {
         const { navigation } = this.props;
@@ -92,8 +94,7 @@ class MultiChatScreen extends Component {
                             justifyContent: 'center',
                             flexDirection: 'row',
                             alignItems: 'center',
-                        }}
-                    >
+                        }}>
                         <Image
                             style={{ height: 20, width: 20, tintColor: 'white' }}
                             source={goback}
@@ -105,16 +106,15 @@ class MultiChatScreen extends Component {
                             flexDirection: 'row',
                             alignItems: 'center',
 
-                        }}
-                    >
+                        }}>
                         <View style={{ flex: 1 }}>
                             <Image
                                 style={{ height: 50, width: 50, borderRadius: 50, alignItems: 'center', justifyContent: 'center' }}
-
+                                source={this.state.group.groupavatar ? { uri: this.state.group.groupavatar } : null}
                             />
                         </View>
                         <View style={{ flex: 4 }}>
-                            <Text style={{ fontSize: 24, color: 'white' }}>{this.state.group.groupname}</Text>
+                            <Text style={{ fontSize: 18, color: 'white' }}>{this.state.group.groupname}</Text>
                         </View>
 
                     </View>

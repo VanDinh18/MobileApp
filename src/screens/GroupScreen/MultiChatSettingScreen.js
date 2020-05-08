@@ -16,6 +16,7 @@ class MultiChatSettingScreen extends Component{
                 chatkey: props.navigation.state.params.chatkey,
                 members: props.navigation.state.params.members,
                 groupname: props.navigation.state.params.groupname,
+                groupavatar: props.navigation.state.params.groupavatar,
                 content: props.navigation.state.params.content,
             }
         };
@@ -29,6 +30,7 @@ class MultiChatSettingScreen extends Component{
                 chatkey: this.state.group.chatkey,
                 members: this.state.group.members,
                 groupname: this.state.group.groupname,
+                groupavatar: this.state.group.groupavatar,
                 content: this.state.group.content,
             }
         )
