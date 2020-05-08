@@ -28,7 +28,12 @@ class GroupScreen extends Component {
     }
 
     gotoCreateNewGroup() {
-        this.props.navigation.navigate('AddFriendToGroupScreen');
+        this.props.navigation.navigate(
+            'AddFriendToGroupScreen',
+            {
+                DATA: this.state.DATA,
+            }
+        );
     }
 
     async componentDidMount() {
@@ -73,8 +78,8 @@ class GroupScreen extends Component {
                         keyExtractor={(item) => item.id.toString()}
                     />
                     <TouchableOpacity
-                        onPress={()=>this.gotoCreateNewGroup()}
-                        style={{alignSelf: 'flex-end', marginRight: 30, marginBottom: 30}}
+                        onPress={() => this.gotoCreateNewGroup()}
+                        style={{ alignSelf: 'flex-end', marginRight: 30, marginBottom: 30 }}
                     >
                         <Image
                             style={{ width: 50, height: 50 }}

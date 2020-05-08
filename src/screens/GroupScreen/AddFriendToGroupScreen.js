@@ -9,6 +9,7 @@ import {
     StyleSheet,
     Dimensions,
     Image,
+    Alert,
 } from 'react-native';
 import '@react-native-firebase/database';
 import firebase from '@react-native-firebase/app';
@@ -31,6 +32,7 @@ class AddFriendToGroupScreen extends Component {
             isFocusedGroupname: false,
             isFocusedSearchBar: false,
             show: false,
+            group: props.navigation.state.params.DATA,
         }
         this.submit = this.submit.bind(this);
         this.filterSearch = this.filterSearch.bind(this);
@@ -43,16 +45,17 @@ class AddFriendToGroupScreen extends Component {
     async submit() {
         var members = [];
         var isSelected = this.state.isSelected;
-        var groupname = this.state.groupname;
+        var groupname = this.state.groupname.trim();
         isSelected.forEach(function (item) {
             members.push(item.title);
         });
         members.push(User.username);
 
-        if (members.length >= 2 && groupname !== '') {
+        if (this.validateMembers(members) && this.validateGroupname(groupname)) {
             firebase.database().ref('groups/').child(User.username).push({
-                groupname: this.state.groupname,
+                groupname: groupname,
                 members: members,
+                groupavatar: 'https://imgur.com/BqHK8v2.png',
             });
             var Root = firebase.database().ref('groups/').child(User.username);
             var key = '';
@@ -67,13 +70,35 @@ class AddFriendToGroupScreen extends Component {
                 firebase.database().ref('groups/').child(members[i]).child(key).set({
                     groupname: groupname,
                     members: members,
+                    groupavatar: 'https://imgur.com/BqHK8v2.png',
                 });
             }
+            this.props.navigation.navigate('GroupScreen');
         }
         else
-            console.log('error');
+            console.log('error add friend to group');
     }
-
+    validateGroupname(groupname) {
+        if (groupname == '') {
+            Alert.alert("Bạn chưa đặt tên nhóm");
+            return false;
+        }
+        var group = this.state.group;
+        for (var i = 0; i < group.length; i++) {
+            if (group[i].groupname == groupname) {
+                Alert.alert("Tên nhóm đã tồn tại trong danh sách nhóm của bạn")
+                return false;
+            }
+        }
+        return true;
+    }
+    validateMembers(members) {
+        if (members.length <= 2) {
+            Alert.alert("Nhóm có 3 thành viên trở lên");
+            return false;
+        }
+        return true;
+    }
     filterSearch(text) {
         this.setState({ friend: text });
         const newData = this.state.Data.filter(function (item) {
@@ -220,38 +245,33 @@ class AddFriendToGroupScreen extends Component {
                         }}
                         placeholder='Đặt tên nhóm'
                         selectionColor='#428AF8'
-                        underlineColorAndroid={
-                            this.state.isFocusedGroupname ? '#428AF8' : '#D3D3D3'
-                        }
+                        underlineColorAndroid={this.state.isFocusedGroupname ? '#428AF8' : '#D3D3D3'}
                         onFocus={this.handleFocus}
                         onBlur={this.handleBlur}
                         onChangeText={this.handleText('groupname')}
                         value={this.state.groupname} />
                 </View>
 
-                {
-                    this.state.show ?
-                        <View style={styles.listFriendIsSelected}>
-                            <FlatList
-                                data={this.state.isSelected}
-                                renderItem={({ item }) => (
-                                    <View style={{ width: DEVICE_WIDTH / 5, marginTop: 10 }}>
-                                        <TouchableOpacity
-                                            onPress={() => this.deleteMembers(item)}
-                                            style={{ alignItems: 'center', flex: 1, flexDirection: 'column' }} >
-                                            <Image
-                                                style={{ height: 38, width: 38, borderRadius: 50 }}
-                                                source={item.avatar ? { uri: item.avatar } : null} />
-                                            <Text>{item.title}</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                )}
-                                keyExtractor={(item) => item.id.toString()}
-                                horizontal={true} />
-                        </View>
-                        : null
-                }
-
+                {this.state.show ?
+                    <View style={styles.listFriendIsSelected}>
+                        <FlatList
+                            data={this.state.isSelected}
+                            renderItem={({ item }) => (
+                                <View style={{ width: DEVICE_WIDTH / 5, marginTop: 10 }}>
+                                    <TouchableOpacity
+                                        onPress={() => this.deleteMembers(item)}
+                                        style={{ alignItems: 'center', flex: 1, flexDirection: 'column' }} >
+                                        <Image
+                                            style={{ height: 38, width: 38, borderRadius: 50 }}
+                                            source={item.avatar ? { uri: item.avatar } : null} />
+                                        <Text>{item.title}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                            keyExtractor={(item) => item.id.toString()}
+                            horizontal={true} />
+                    </View>
+                    : null}
                 <View style={styles.searchBar}>
                     <Image
                         source={search}
