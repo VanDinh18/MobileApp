@@ -20,6 +20,7 @@ import send from '../../assets/images/send.png';
 class MultiChatScreen extends Component {
     constructor(props) {
         super(props);
+        this._isMounted = false;
         this.state = {
             textMessage: '',
             Data: [],
@@ -71,6 +72,7 @@ class MultiChatScreen extends Component {
         }
     }
     componentDidMount() {
+        this._isMounted = true;
         var Root = firebase.database().ref('groups').child(User.username);
         var newRoot = Root.child(this.state.group.chatkey).child('content');
         newRoot.on('child_added', (value) => {
@@ -82,7 +84,7 @@ class MultiChatScreen extends Component {
         })
     }
     componentWillUnmount() {
-
+        this._isMounted = false;
     }
     render() {
         const { navigation } = this.props;

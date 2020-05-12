@@ -11,7 +11,6 @@ import {
     KeyboardAvoidingView,
 } from 'react-native';
 
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/auth';
 import '@react-native-firebase/database';
@@ -19,10 +18,12 @@ import User from '../../components/User';
 import goback from '../../assets/images/goback.png';
 import smallcircle from '../../assets/images/smallcircle.png';
 import ItemFlatListMessage from '../../components/ItemFlatListMessage';
+import send from '../../assets/images/send.png';
 
 export default class ChatScreen extends Component {
     constructor(props) {
         super(props);
+        this._isMounted = false;
         this.state = {
             textMessage: '',
             Data: [],
@@ -65,6 +66,7 @@ export default class ChatScreen extends Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
         firebase.database().ref('messages').child(User.username).child(this.state.person.name)
             .on('child_added', (value) => {
                 this.setState((prevState) => {
@@ -74,7 +76,9 @@ export default class ChatScreen extends Component {
                 })
             })
     }
-
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
     render() {
         const { navigation } = this.props;
         return (
@@ -87,12 +91,10 @@ export default class ChatScreen extends Component {
                             justifyContent: 'center',
                             flexDirection: 'row',
                             alignItems: 'center',
-                        }}
-                    >
+                        }} >
                         <Image
                             style={{ height: 20, width: 20, tintColor: 'white' }}
-                            source={goback}
-                        />
+                            source={goback} />
                     </TouchableOpacity>
                     <View
                         style={{
@@ -100,8 +102,7 @@ export default class ChatScreen extends Component {
                             flexDirection: 'row',
                             alignItems: 'center',
 
-                        }}
-                    >
+                        }}>
                         <View style={{ flex: 1 }}>
                             <Image
                                 style={{ height: 50, width: 50, borderRadius: 50, alignItems: 'center', justifyContent: 'center' }}
@@ -109,33 +110,28 @@ export default class ChatScreen extends Component {
                             />
                         </View>
                         <View style={{ flex: 4 }}>
-                            <Text style={{ fontSize: 24, color: 'white' }}>{this.state.person.name}</Text>
+                            <Text style={{ fontSize: 18, color: 'white' }}>{this.state.person.name}</Text>
                         </View>
-
                     </View>
+
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                         <TouchableOpacity
-                            onPress={() => this.gotoChatSettingScreen(navigation)}
-                        >
+                            onPress={() => this.gotoChatSettingScreen(navigation)}>
                             <Image
                                 style={{ height: 30, width: 30, tintColor: 'white' }}
-                                source={smallcircle}
-                            />
+                                source={smallcircle} />
                         </TouchableOpacity>
                     </View>
                 </View>
-
 
                 <KeyboardAvoidingView style={styles.bodyMessage}>
                     <FlatList
                         data={this.state.Data}
                         renderItem={({ item }) => (
                             <ItemFlatListMessage
-                                item={item}
-                            />
+                                item={item} />
                         )}
-                        keyExtractor={(item, index) => index.toString()}
-                    />
+                        keyExtractor={(item, index) => index.toString()} />
                 </KeyboardAvoidingView>
 
                 <View style={styles.wrapperInputMessage}>
@@ -147,11 +143,10 @@ export default class ChatScreen extends Component {
                     />
                     <TouchableOpacity
                         style={styles.buttonSend}
-                        onPress={() => this.sendMessage(this.state.person.name)}
-                    >
-                        <Text style={{ fontSize: 30 }}>
-                            Send
-                        </Text>
+                        onPress={() => this.sendMessage(this.state.person.name)}>
+                        <Image
+                            style={{ height: 30, width: 30, tintColor: '#66b3ff' }}
+                            source={send} />
                     </TouchableOpacity>
                 </View>
 
@@ -172,21 +167,29 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         backgroundColor: '#66b3ff',
     },
-
     bodyMessage: {
         flex: 10,
         backgroundColor: '#f2f2f2',
     },
-
     wrapperInputMessage: {
         flex: 1,
         flexDirection: 'row',
-        backgroundColor: 'gray',
+        backgroundColor: '#f2f2f2',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     inputMessage: {
-        flex: 5
+        flex: 5,
+        width: 0.86 * DEVICE_WIDTH,
+        height: 40,
+        marginHorizontal: 20,
+        paddingLeft: 20,
+        borderRadius: 20,
+        backgroundColor: 'white'
     },
     buttonSend: {
-        flex: 1
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     }
 });
