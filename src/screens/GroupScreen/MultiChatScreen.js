@@ -8,12 +8,14 @@ import {
     KeyboardAvoidingView,
     FlatList,
     Image,
+    Dimensions,
 } from 'react-native';
 import firebase from '@react-native-firebase/app';
 import User from '../../components/User';
-import ItemFlatListMessage from '../../components/ItemFlatListMessage';
+import ItemFlatListMessageGroup from '../../components/ItemFlatListMessageGroup';
 import goback from '../../assets/images/goback.png';
 import smallcircle from '../../assets/images/smallcircle.png';
+import send from '../../assets/images/send.png';
 
 class MultiChatScreen extends Component {
     constructor(props) {
@@ -120,46 +122,45 @@ class MultiChatScreen extends Component {
                     </View>
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                         <TouchableOpacity
-                            onPress={() => this.gotoMultiChatSettingScreen(navigation)}
-                        >
+                            onPress={() => this.gotoMultiChatSettingScreen(navigation)}>
                             <Image
                                 style={{ height: 30, width: 30, tintColor: 'white' }}
-                                source={smallcircle}
-                            />
+                                source={smallcircle} />
                         </TouchableOpacity>
                     </View>
                 </View>
                 <KeyboardAvoidingView style={styles.bodyMessage}>
                     <FlatList
                         data={this.state.Data}
-                        renderItem={({ item }) => (
-                            <ItemFlatListMessage
+                        renderItem={({ item, index }) => (
+                            <ItemFlatListMessageGroup
                                 item={item}
-                            />
+                                index={index}
+                                Data={this.state.Data} />
                         )}
-                        keyExtractor={(item, index) => index.toString()}
-                    />
+                        keyExtractor={(item, index) => index.toString()} />
                 </KeyboardAvoidingView>
                 <View style={styles.wrapperInputMessage}>
                     <TextInput
                         style={styles.inputMessage}
-                        placeholder='Your message'
+                        placeholder='Nhập tin nhắn...'
                         value={this.state.textMessage}
-                        onChangeText={this.handleChange('textMessage')}
-                    />
+                        onChangeText={this.handleChange('textMessage')} />
                     <TouchableOpacity
                         style={styles.buttonSend}
-                        onPress={() => this.sendMessage()}
-                    >
-                        <Text style={{ fontSize: 30 }}>
-                            Send
-                        </Text>
+                        onPress={() => this.sendMessage()}>
+                        <Image
+                            style={{ height: 30, width: 30, tintColor: '#66b3ff' }}
+                            source={send} />
                     </TouchableOpacity>
                 </View>
             </View>
         )
     }
 }
+
+const DEVICE_WIDTH = Dimensions.get('window').width;
+const DEVICE_HEIGHT = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
     wrapper: {
@@ -179,13 +180,23 @@ const styles = StyleSheet.create({
     wrapperInputMessage: {
         flex: 1,
         flexDirection: 'row',
-        backgroundColor: 'gray',
+        backgroundColor: '#f2f2f2',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     inputMessage: {
-        flex: 5
+        flex: 5,
+        width: 0.86 * DEVICE_WIDTH,
+        height: 40,
+        marginHorizontal: 20,
+        paddingLeft: 20,
+        borderRadius: 20,
+        backgroundColor: 'white'
     },
     buttonSend: {
-        flex: 1
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     }
 });
 

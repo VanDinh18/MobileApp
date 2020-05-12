@@ -18,7 +18,7 @@ class ItemFlatListMessage extends Component {
         let result = (d.getHours() < 10 ? '0' : '') + d.getHours() + ':';
         result += (d.getMinutes() < 10 ? '0' : '') + d.getMinutes();
         if (c.getDay() !== d.getDay()) {
-            result = d.getDay() + ' ' + d.getMonth() + ' ' + result;
+            result = d.getDay() + '/' + d.getMonth() + ' ' + result;
         }
         return result;
     }
@@ -37,15 +37,14 @@ class ItemFlatListMessage extends Component {
                     marginRight: item.from === User.username ? 15 : 0,
                     marginLeft: item.from !== User.username ? 15 : 0,
                     maxWidth: DEVICE_WIDTH * 0.8,
-                }}
-            >
+                }}>
                 <View style={{ 
                     marginLeft: 8,
                     marginRight: 8,
                     marginTop: 5,
                     marginBottom: 5,
                 }}>
-                    <Text style={{ fontSize: 18 }}>{item.message}</Text>
+                    <Text style={{ fontSize: 16 }}>{item.message}</Text>
                     <Text style={{ fontSize: 10, color: '#8c8c8c' }}>{this.convertTime(item.time)}</Text>
                 </View>
             </View>
