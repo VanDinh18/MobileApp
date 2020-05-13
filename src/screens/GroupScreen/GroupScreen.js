@@ -15,18 +15,23 @@ import firebase from '@react-native-firebase/app';
 import User from '../../components/User';
 import addfriend from '../../assets/images/addfriend.png';
 import ItemFlatListGroup from '../../components/ItemFlatListGroup';
-
+import ItemFlatListGroupisSelected from '../../components/ItemFlatListGroupisSelected';
+import search from '../../assets/images/search.png';
+import deleteImg from '../../assets/images/delete.png';
 
 class GroupScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            text: '',
+            valueSearch: '',
             DATA: [],
+            searchData: [],
+            searching: false,
         };
         this.gotoCreateNewGroup = this.gotoCreateNewGroup.bind(this);
+        this.filterSearch = this.filterSearch.bind(this);
+        this.closeSearch = this.closeSearch.bind(this);
     }
-
     gotoCreateNewGroup() {
         this.props.navigation.navigate(
             'AddFriendToGroupScreen',
@@ -35,7 +40,37 @@ class GroupScreen extends Component {
             }
         );
     }
-
+    filterSearch(text) {
+        this.setState({ valueSearch: text });
+        if (text.length > 0) {
+            this.setState({ searching: true });
+        }
+        else {
+            this.setState({ searching: false });
+        }
+        const newData = this.state.DATA.filter(function (item) {
+            const itemData = item.groupname.normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/đ/g, "d")
+                .replace(/Đ/g, "D")
+                .toUpperCase()
+                .trim();
+            const textData = text.normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/đ/g, "d")
+                .replace(/Đ/g, "D")
+                .toUpperCase()
+                .trim();
+            return itemData.indexOf(textData) > -1
+        });
+        this.setState({ searchData: newData });
+    }
+    closeSearch(){
+        this.setState({
+            searching: false,
+            valueSearch: '',
+        });
+    }
     async componentDidMount() {
         var arr = [];
         var i = 0;
@@ -56,40 +91,61 @@ class GroupScreen extends Component {
         });
         this.setState({ DATA: arr });
     }
+    componentWillUnmount() {
 
+    }
     render() {
         return (
-            <View style={styles.container}>
+            <SafeAreaView style={styles.container}>
                 <View style={styles.wrapperSearch}>
-
+                    <Image
+                        style={styles.imageSearch}
+                        source={search} />
+                    <TextInput
+                        style={styles.input}
+                        placeholder='Tìm kiếm nhóm'
+                        onChangeText={(text) => this.filterSearch(text)}
+                        value={this.state.valueSearch} />
+                    <TouchableOpacity
+                        style={styles.wrapperDelete}
+                        onPress={()=> this.closeSearch()}>
+                        <Image
+                            style={styles.imageDelete}
+                            source={deleteImg} />
+                    </TouchableOpacity>
                 </View>
-
-                <SafeAreaView style={styles.list}>
+                <View style={styles.list}>
                     <FlatList
-                        data={this.state.DATA}
-                        renderItem={({ item }) => (
-                            <ItemFlatListGroup
-                                chatkey={item.key}
-                                groupname={item.groupname}
-                                groupavatar={item.groupavatar}
-                                members={item.members}
-                                content={item.content}
-                                navigation={this.props.navigation}
-                            />
-                        )}
-                        keyExtractor={(item) => item.id.toString()}
-                    />
+                        data={this.state.searching ? this.state.searchData : this.state.DATA}
+                        renderItem={
+                            this.state.searching ?
+                                ({ item }) => (
+                                    <ItemFlatListGroupisSelected
+                                        chatkey={item.key}
+                                        groupname={item.groupname}
+                                        groupavatar={item.groupavatar}
+                                        members={item.members}
+                                        content={item.content}
+                                        navigation={this.props.navigation} />)
+                                :
+                                ({ item }) => (
+                                    <ItemFlatListGroup
+                                        chatkey={item.key}
+                                        groupname={item.groupname}
+                                        groupavatar={item.groupavatar}
+                                        members={item.members}
+                                        content={item.content}
+                                        navigation={this.props.navigation} />)}
+                        keyExtractor={(item) => item.id.toString()} />
                     <TouchableOpacity
                         onPress={() => this.gotoCreateNewGroup()}
-                        style={{ alignSelf: 'flex-end', marginRight: 30, marginBottom: 30 }}
-                    >
+                        style={{ alignSelf: 'flex-end', marginRight: 30, marginBottom: 30 }}>
                         <Image
                             style={{ width: 50, height: 50 }}
-                            source={addfriend}
-                        />
+                            source={addfriend} />
                     </TouchableOpacity>
-                </SafeAreaView>
-            </View>
+                </View>
+            </SafeAreaView>
         );
     }
 }
@@ -100,13 +156,43 @@ const DEVICE_HEIGHT = Dimensions.get('window').height;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        flexDirection: 'column',
     },
     wrapperSearch: {
         flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
         width: DEVICE_WIDTH,
         paddingBottom: 10,
         paddingTop: 10,
         backgroundColor: '#5a94f2',
+    },
+    input: {
+        backgroundColor: 'rgba(255, 255, 255, 0.4)',
+        width: 0.86 * DEVICE_WIDTH,
+        height: 40,
+        marginHorizontal: 20,
+        paddingLeft: 45,
+        borderRadius: 20,
+    },
+    imageSearch: {
+        position: 'absolute',
+        zIndex: 99,
+        width: 22,
+        height: 22,
+        left: 40,
+        top: 20,
+    },
+    wrapperDelete: {
+        position: 'absolute',
+        width: 22,
+        height: 22,
+        right: 40,
+        top: 20,
+    },
+    imageDelete: {
+        width: 22,
+        height: 22,
     },
     list: {
         flex: 15,

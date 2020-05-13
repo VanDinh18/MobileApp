@@ -30,37 +30,49 @@ class ItemFlatListGroup extends Component {
         );
     }
     renderLastMessage(content) {
-        var a = Object.values(content).sort(function (a, b) {
-            return a.time - b.time;
-        });
-        var n = a.length;
-        return (
-            <Text style={{ flex: 1, textAlignVertical: 'top', fontSize: 14, fontWeight: '100', color: '#b3b3b3' }}>
-                {a[n - 1].message}
-            </Text>
-        )
-    }
-    renderTime(content) {
-        var a = Object.values(content).sort(function (a, b) {
-            return a.time - b.time;
-        });
-        var n = a.length;
-        var today = new Date();
-        var date = new Date(a[n - 1].time);
-        var year = date.getFullYear();
-        var month = ("0" + (date.getMonth() + 1)).substr(-2);
-        var day = ("0" + date.getDate()).substr(-2);
-        var hour = ("0" + date.getHours()).substr(-2);
-        var minutes = ("0" + date.getMinutes()).substr(-2);
-        var result = '';
-        if (today.getDay() !== date.getDay()) {
-            result = day + " thg " + month;
+        if (typeof content !== 'undefined') {
+            var a = Object.values(content).sort(function (a, b) {
+                return a.time - b.time;
+            });
+            var n = a.length;
+            return (
+                <Text style={{ flex: 1, textAlignVertical: 'top', fontSize: 14, fontWeight: '100', color: '#b3b3b3' }}>
+                    {a[n - 1].message}
+                </Text>
+            )
         }
         else
-            result = hour + ":" + minutes;
-        return (
-            <Text style={{ fontSize: 14, color: '#b3b3b3' }}>{result}</Text>
-        )
+            return (
+                <Text style={{ flex: 1 }}></Text>
+            )
+    }
+    renderTime(content) {
+        if (typeof content !== 'undefined') {
+            var a = Object.values(content).sort(function (a, b) {
+                return a.time - b.time;
+            });
+            var n = a.length;
+            var today = new Date();
+            var date = new Date(a[n - 1].time);
+            var year = date.getFullYear();
+            var month = ("0" + (date.getMonth() + 1)).substr(-2);
+            var day = ("0" + date.getDate()).substr(-2);
+            var hour = ("0" + date.getHours()).substr(-2);
+            var minutes = ("0" + date.getMinutes()).substr(-2);
+            var result = '';
+            if (today.getDay() !== date.getDay()) {
+                result = day + " thg " + month;
+            }
+            else
+                result = hour + ":" + minutes;
+            return (
+                <Text style={{ fontSize: 14, color: '#b3b3b3' }}>{result}</Text>
+            )
+        }
+        else
+            return (
+                <Text></Text>
+            )
     }
     render() {
         const { chatkey, members, groupname, groupavatar, navigation, content } = this.props;
