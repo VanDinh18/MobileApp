@@ -21,9 +21,9 @@ import ItemFlatListMessage from '../../components/ItemFlatListMessage';
 import send from '../../assets/images/send.png';
 
 export default class ChatScreen extends Component {
+    _isMounted = false;
     constructor(props) {
         super(props);
-        this._isMounted = false;
         this.state = {
             textMessage: '',
             Data: [],
@@ -67,14 +67,16 @@ export default class ChatScreen extends Component {
 
     componentDidMount() {
         this._isMounted = true;
-        firebase.database().ref('messages').child(User.username).child(this.state.person.name)
-            .on('child_added', (value) => {
-                this.setState((prevState) => {
-                    return {
-                        Data: [...prevState.Data, value.val()]
-                    }
+        if (this._isMounted) {
+            firebase.database().ref('messages').child(User.username).child(this.state.person.name)
+                .on('child_added', (value) => {
+                    this.setState((prevState) => {
+                        return {
+                            Data: [...prevState.Data, value.val()]
+                        }
+                    })
                 })
-            })
+        }
     }
     componentWillUnmount() {
         this._isMounted = false;

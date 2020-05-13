@@ -18,9 +18,9 @@ import smallcircle from '../../assets/images/smallcircle.png';
 import send from '../../assets/images/send.png';
 
 class MultiChatScreen extends Component {
+    _isMounted = false;
     constructor(props) {
         super(props);
-        this._isMounted = false;
         this.state = {
             textMessage: '',
             Data: [],
@@ -73,15 +73,17 @@ class MultiChatScreen extends Component {
     }
     componentDidMount() {
         this._isMounted = true;
-        var Root = firebase.database().ref('groups').child(User.username);
-        var newRoot = Root.child(this.state.group.chatkey).child('content');
-        newRoot.on('child_added', (value) => {
-            this.setState((prevState) => {
-                return {
-                    Data: [...prevState.Data, value.val()]
-                }
+        if (this._isMounted) {
+            var Root = firebase.database().ref('groups').child(User.username);
+            var newRoot = Root.child(this.state.group.chatkey).child('content');
+            newRoot.on('child_added', (value) => {
+                this.setState((prevState) => {
+                    return {
+                        Data: [...prevState.Data, value.val()]
+                    }
+                })
             })
-        })
+        }
     }
     componentWillUnmount() {
         this._isMounted = false;
