@@ -9,7 +9,7 @@ import ChatSettingScreen from '../screens/ChatSettingScreen/ChatSettingScreen';
 import TabNavigator from './TabNavigator';
 import MultiChatScreen from '../screens/GroupScreen/MultiChatScreen';
 import MultiChatSettingScreen from '../screens/GroupScreen/MultiChatSettingScreen';
-
+import AddFriendToGroupExistScreen from '../screens/GroupScreen/AddFriendToGroupExistScreen';
 const AppNavigator = createSwitchNavigator(
     {
         SplashScreen: { screen: SplashScreen },
@@ -23,6 +23,7 @@ const AppNavigator = createSwitchNavigator(
         AddFriendToGroupScreen: { screen: AddFriendToGroupScreen },
         MultiChatScreen: {screen: MultiChatScreen},
         MultiChatSettingScreen: {screen: MultiChatSettingScreen},
+        AddFriendToGroupExistScreen: {screen: AddFriendToGroupExistScreen},
     },
     {
         initialRouteName: 'SplashScreen',
