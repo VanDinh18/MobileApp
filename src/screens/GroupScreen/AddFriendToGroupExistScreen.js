@@ -43,6 +43,7 @@ class AddFriendToGroupExistScreen extends Component {
         this.selectMembers = this.selectMembers.bind(this);
         this.deleteMembers = this.deleteMembers.bind(this);
     }
+    _isMounted = false;
     goback() {
         this.props.navigation.navigate(
             'MultiChatScreen',
@@ -63,7 +64,7 @@ class AddFriendToGroupExistScreen extends Component {
         var new_members = old_members;
         var chatkey = this.state.group.chatkey
         var isSelected = this.state.isSelected;
-        if(isSelected.length != 0){
+        if (isSelected.length != 0) {
             isSelected.forEach(function (item) {
                 new_members.push(item.title);
             });
@@ -93,10 +94,10 @@ class AddFriendToGroupExistScreen extends Component {
             });
             this.props.navigation.navigate('GroupScreen');
         }
-        else{
+        else {
             Alert.alert('Bạn chưa thêm ai vào nhóm')
         }
-        
+
     }
     filterSearch(text) {
         this.setState({ friend: text });
@@ -162,21 +163,28 @@ class AddFriendToGroupExistScreen extends Component {
         }
     }
 
-    async componentDidMount() {
+    componentDidMount = async () => {
         try {
+            this._isMounted = true;
             var arr1 = [];
             var i = 0;
-            var Root = firebase.database().ref('messages').child(User.username);
-            await Root.once("value").then(snapshot => {
-                snapshot.forEach((childs => {
-                    let a = {
-                        id: i,
-                        title: childs.key,
-                    };
-                    arr1.push(a);
-                    i++;
-                }))
-            });
+            var Root1 = null;
+            if (this._isMounted) {
+                Root1 = firebase.database().ref('messages').child(User.username);
+                await Root1.once("value").then(snapshot => {
+                    snapshot.forEach((childs => {
+                        let a = {
+                            id: i,
+                            title: childs.key,
+                        };
+                        arr1.push(a);
+                        i++;
+                    }))
+                });
+            }
+            else {
+                Root1.off('value');
+            }
             //xóa thành viên đã có trong nhóm khỏi danh sách tìm kiếm
             var members = this.state.group.members;
             for (var k = 0; k < members.length; k++) {
@@ -186,22 +194,31 @@ class AddFriendToGroupExistScreen extends Component {
             }
             //thêm avatar của thành viên trong nhóm
             var arr2 = [];
-            arr1.forEach(item => {
-                var Root = firebase.database().ref("users").child(item.title);
-                Root.once("value", value => {
-                    let b = {
-                        id: item.id,
-                        title: item.title,
-                        avatar: value.val().avatar,
-                    }
-                    arr2.push(b);
+            var Root2 = null;
+            if (this._isMounted) {
+                arr1.forEach(item => {
+                    Root2 = firebase.database().ref("users").child(item.title);
+                    Root2.once("value", value => {
+                        let b = {
+                            id: item.id,
+                            title: item.title,
+                            avatar: value.val().avatar,
+                        }
+                        arr2.push(b);
+                    })
                 })
-            })
-            this.setState({ Data: arr2, searchData: arr2 });
+                this.setState({ Data: arr2, searchData: arr2 });
+            }
+            else {
+                Root2.off('value');
+            }
         }
         catch (error) {
             console.error(error);
         }
+    }
+    componentWillUnmount() {
+        this._isMounted = false;
     }
     render() {
         const { onFocus, onBlur, ...otherProps } = this.props;
@@ -217,16 +234,31 @@ class AddFriendToGroupExistScreen extends Component {
                     </TouchableOpacity>
                     <View style={{ flex: 5 }}>
                     </View>
-                    <TouchableOpacity
-                        style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-                        onPress={() => this.submit()}>
-                        <Image
-                            style={{ height: 20, width: 20, tintColor: 'white' }}
-                            source={complete} />
-                    </TouchableOpacity>
+                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        {this.state.show
+                            ?
+                            <View>
+                                <TouchableOpacity
+                                    style={{ justifyContent: 'center', alignItems: 'center' }}
+                                    onPress={() => this.submit()}>
+                                    <Image
+                                        style={{ height: 20, width: 20, tintColor: 'white' }}
+                                        source={complete} />
+                                </TouchableOpacity>
+                            </View>
+                            : null
+                        }
+                    </View>
                 </View>
                 <View style={styles.groupname}>
-
+                    <View style={{ marginLeft: 10 }}>
+                        <Image
+                            style={{ height: 50, width: 50, borderRadius: 50 }}
+                            source={this.state.group.groupavatar ? { uri: this.state.group.groupavatar } : null} />
+                    </View>
+                    <View style={{ marginLeft: 10 }}>
+                        <Text style={{ fontWeight: 'bold', fontSize: 20 }}>{this.state.group.groupname}</Text>
+                    </View>
                 </View>
 
                 {this.state.show ?
@@ -313,6 +345,7 @@ const styles = StyleSheet.create({
     groupname: {
         flex: 1.2,
         flexDirection: 'row',
+        alignItems: 'center',
     },
     listFriendIsSelected: {
         flex: 1.2,
