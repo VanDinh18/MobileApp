@@ -31,26 +31,32 @@ class ItemFlatListGroup extends Component {
     }
     renderLastMessage(content) {
         if (typeof content !== 'undefined') {
-            var a = Object.values(content).sort(function (a, b) {
-                return a.time - b.time;
-            });
+            // var a = Object.values(content).sort(function (a, b) {
+            //     return a.time - b.time;
+            // });
+            var a = Object.values(content);
             var n = a.length;
             return (
-                <Text style={{ flex: 1, textAlignVertical: 'top', fontSize: 14, fontWeight: '100', color: '#b3b3b3' }}>
+                <Text
+                    style={{ flex: 1, textAlignVertical: 'top', fontSize: 14, fontWeight: '100', color: '#b3b3b3' }}
+                    numberOfLines={1}>
                     {a[n - 1].message}
                 </Text>
             )
         }
         else
             return (
-                <Text style={{ flex: 1 }}></Text>
+                <Text style={{ flex: 1, textAlignVertical: 'top', fontSize: 14, fontWeight: '100', color: '#b3b3b3' }}>
+                    Bạn có thể bắt đầu trò chuyện !
+                </Text>
             )
     }
-    renderTime(content) {
+    renderTime(content, creationtime) {
         if (typeof content !== 'undefined') {
-            var a = Object.values(content).sort(function (a, b) {
-                return a.time - b.time;
-            });
+            // var a = Object.values(content).sort(function (a, b) {
+            //     return a.time - b.time;
+            // });
+            var a = Object.values(content);
             var n = a.length;
             var today = new Date();
             var date = new Date(a[n - 1].time);
@@ -69,13 +75,27 @@ class ItemFlatListGroup extends Component {
                 <Text style={{ fontSize: 14, color: '#b3b3b3' }}>{result}</Text>
             )
         }
-        else
+        else {
+            var today = new Date();
+            var date = new Date(creationtime);
+            var year = date.getFullYear();
+            var month = ("0" + (date.getMonth() + 1)).substr(-2);
+            var day = ("0" + date.getDate()).substr(-2);
+            var hour = ("0" + date.getHours()).substr(-2);
+            var minutes = ("0" + date.getMinutes()).substr(-2);
+            var result = '';
+            if (today.getDay() !== date.getDay()) {
+                result = day + " thg " + month;
+            }
+            else
+                result = hour + ":" + minutes;
             return (
-                <Text></Text>
+                <Text style={{ fontSize: 14, color: '#b3b3b3' }}>{result}</Text>
             )
+        }
     }
     render() {
-        const { chatkey, members, groupname, groupavatar, navigation, content } = this.props;
+        const { chatkey, groupname, groupavatar, members, content, creationtime, navigation } = this.props;
         return (
             <View style={{ flex: 1 }}>
                 <TouchableOpacity
@@ -87,13 +107,15 @@ class ItemFlatListGroup extends Component {
                             source={groupavatar ? { uri: groupavatar } : null} />
                     </View>
                     <View style={styles.title}>
-                        <Text style={{ flex: 1, textAlignVertical: 'bottom', fontSize: 18, fontWeight: "900" }}>
+                        <Text
+                            style={{ flex: 1, textAlignVertical: 'bottom', fontSize: 18, fontWeight: "900" }}
+                            numberOfLines={1}>
                             {groupname}
                         </Text>
                         {this.renderLastMessage(content)}
                     </View>
                     <View style={styles.time}>
-                        {this.renderTime(content)}
+                        {this.renderTime(content, creationtime)}
                     </View>
                 </TouchableOpacity>
             </View>

@@ -17,7 +17,7 @@ import goback from '../../assets/images/goback.png';
 import smallcircle from '../../assets/images/smallcircle.png';
 import send from '../../assets/images/send.png';
 
-class MultiChatScreen extends Component { 
+class MultiChatScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -71,7 +71,7 @@ class MultiChatScreen extends Component {
             this.setState({ textMessage: '' });
         }
     }
-    componentDidMount =() =>{
+    componentDidMount = () => {
         this._isMounted = true;
         var Root = null;
         var newRoot = null;
@@ -86,7 +86,7 @@ class MultiChatScreen extends Component {
                 })
             })
         }
-        else{
+        else {
             Root.off('value');
         }
     }
@@ -125,7 +125,11 @@ class MultiChatScreen extends Component {
                             />
                         </View>
                         <View style={{ flex: 4 }}>
-                            <Text style={{ fontSize: 18, color: 'white' }}>{this.state.group.groupname}</Text>
+                            <Text
+                                style={{ fontSize: 18, color: 'white' }}
+                                numberOfLines={1}>
+                                {this.state.group.groupname}
+                            </Text>
                         </View>
 
                     </View>
