@@ -10,12 +10,13 @@ import TabNavigator from './TabNavigator';
 import MultiChatScreen from '../screens/GroupScreen/MultiChatScreen';
 import MultiChatSettingScreen from '../screens/GroupScreen/MultiChatSettingScreen';
 import AddFriendToGroupExistScreen from '../screens/GroupScreen/AddFriendToGroupExistScreen';
+import ForgotPasswordScreen from '../screens/FogotPasswordScreen/ForgotPasswordScreen';
 const AppNavigator = createSwitchNavigator(
     {
         SplashScreen: { screen: SplashScreen },
         LoginScreen: { screen: LoginScreen },
         RegisterScreen: { screen: RegisterScreen },
-
+        ForgotPasswordScreen: {screen: ForgotPasswordScreen},
         Main: TabNavigator,
 
         ChatScreen: { screen: ChatScreen },

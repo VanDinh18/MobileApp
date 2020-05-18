@@ -15,7 +15,7 @@ export default class SignupSectionLogin extends Component {
         <TouchableOpacity onPress={() => this.props.navigation.navigate('RegisterScreen')}>
           <Text style={styles.text}>Create Account</Text>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => this.props.navigation.navigate('ForgotPasswordScreen')}>
           <Text style={styles.text}>Forgot Password?</Text>
         </TouchableOpacity>
       </View>
