@@ -32,6 +32,7 @@ class GroupScreen extends Component {
         this.filterSearch = this.filterSearch.bind(this);
         this.closeSearch = this.closeSearch.bind(this);
     }
+    _isMounted = false;
     gotoCreateNewGroup() {
         this.props.navigation.navigate(
             'AddFriendToGroupScreen',
@@ -65,34 +66,70 @@ class GroupScreen extends Component {
         });
         this.setState({ searchData: newData });
     }
-    closeSearch(){
+    closeSearch() {
         this.setState({
             searching: false,
             valueSearch: '',
         });
     }
-    async componentDidMount() {
+    componentDidMount = async () => {
         var arr = [];
+        var arr2 = [];
         var i = 0;
-        var Root = firebase.database().ref('groups').child(User.username);
-        await Root.once('value', function (snapshot) {
-            snapshot.forEach(function (childs) {
-                var item = {
-                    id: i,
-                    key: childs.key,
-                    groupavatar: childs.val().groupavatar,
-                    groupname: childs.val().groupname,
-                    members: childs.val().members,
-                    content: childs.val().content,
-                };
-                arr.push(item);
-                i++;
+        var Root = null;
+        this._isMounted = true;
+        if (this._isMounted) {
+            Root = firebase.database().ref('groups').child(User.username);
+            await Root.once('value', function (snapshot) {
+                snapshot.forEach(function (childs) {
+                    var item = {
+                        id: i,
+                        key: childs.key,
+                        groupavatar: childs.val().groupavatar,
+                        groupname: childs.val().groupname,
+                        members: childs.val().members,
+                        content: childs.val().content,
+                        creationtime: childs.val().creationtime,
+                    };
+                    arr.push(item);
+                    i++;
+                })
+            });
+
+            //sắp xếp danh sách group theo thời gian nhắn tin gần nhất
+            arr.forEach(function (item) {
+                if (typeof item.content !== 'undefined') {
+                    item.content = Object.values(item.content).sort(function (a, b) {
+                        return a.time - b.time;
+                    })
+                }
             })
-        });
-        this.setState({ DATA: arr });
+            arr.sort(function (a, b) {
+                if (typeof a.content !== 'undefined' && typeof b.content !== 'undefined') {
+                    var length_a = Object.values(a.content).length;
+                    var length_b = Object.values(b.content).length;
+                    return -Object.values(a.content)[length_a - 1].time + Object.values(b.content)[length_b - 1].time;
+                }
+                else if (typeof a.content === 'undefined' && typeof b.content !== 'undefined') {
+                    var length_b = Object.values(b.content).length;
+                    return -a.creationtime + Object.values(b.content)[length_b - 1].time;
+                }
+                else if (typeof a.content !== 'undefined' && typeof b.content === 'undefined') {
+                    var length_a = Object.values(a.content).length;
+                    return -Object.values(a.content)[length_a - 1].time + b.creationtime;
+                }
+                else {
+                    return -a.creationtime + b.creationtime;
+                }
+            })
+            this.setState({ DATA: arr });
+        }
+        else {
+            Root.off('value');
+        }
     }
     componentWillUnmount() {
-
+        this._isMounted = false;
     }
     render() {
         return (
@@ -108,7 +145,7 @@ class GroupScreen extends Component {
                         value={this.state.valueSearch} />
                     <TouchableOpacity
                         style={styles.wrapperDelete}
-                        onPress={()=> this.closeSearch()}>
+                        onPress={() => this.closeSearch()}>
                         <Image
                             style={styles.imageDelete}
                             source={deleteImg} />
@@ -135,6 +172,7 @@ class GroupScreen extends Component {
                                         groupavatar={item.groupavatar}
                                         members={item.members}
                                         content={item.content}
+                                        creationtime={item.creationtime}
                                         navigation={this.props.navigation} />)}
                         keyExtractor={(item) => item.id.toString()} />
                     <TouchableOpacity

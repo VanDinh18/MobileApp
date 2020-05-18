@@ -18,7 +18,6 @@ import smallcircle from '../../assets/images/smallcircle.png';
 import send from '../../assets/images/send.png';
 
 class MultiChatScreen extends Component {
-    _isMounted = false;
     constructor(props) {
         super(props);
         this.state = {
@@ -36,6 +35,7 @@ class MultiChatScreen extends Component {
         this.sendMessage = this.sendMessage.bind(this);
         this.gotoMultiChatSettingScreen = this.gotoMultiChatSettingScreen.bind(this);
     }
+    _isMounted = false;
     handleChange = key => val => {
         this.setState({ [key]: val });
     }
@@ -71,11 +71,13 @@ class MultiChatScreen extends Component {
             this.setState({ textMessage: '' });
         }
     }
-    componentDidMount() {
+    componentDidMount = () => {
         this._isMounted = true;
+        var Root = null;
+        var newRoot = null;
         if (this._isMounted) {
-            var Root = firebase.database().ref('groups').child(User.username);
-            var newRoot = Root.child(this.state.group.chatkey).child('content');
+            Root = firebase.database().ref('groups').child(User.username);
+            newRoot = Root.child(this.state.group.chatkey).child('content');
             newRoot.on('child_added', (value) => {
                 this.setState((prevState) => {
                     return {
@@ -83,6 +85,9 @@ class MultiChatScreen extends Component {
                     }
                 })
             })
+        }
+        else {
+            Root.off('value');
         }
     }
     componentWillUnmount() {
@@ -120,7 +125,11 @@ class MultiChatScreen extends Component {
                             />
                         </View>
                         <View style={{ flex: 4 }}>
-                            <Text style={{ fontSize: 18, color: 'white' }}>{this.state.group.groupname}</Text>
+                            <Text
+                                style={{ fontSize: 18, color: 'white' }}
+                                numberOfLines={1}>
+                                {this.state.group.groupname}
+                            </Text>
                         </View>
 
                     </View>
