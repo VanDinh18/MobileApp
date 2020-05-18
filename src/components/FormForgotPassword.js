@@ -11,9 +11,9 @@ import {
 
 import UserInputLogin from './UserInputLogin';
 import usernameImg from '../assets/images/username.png';
-import ButtonResetEmail from '../components/ButtonResetEmail';
 
-export default class FormLogin extends Component {
+
+export default class FormForgotPassword extends Component {
     constructor(props) {
         super(props);
         this.state = {          
@@ -46,7 +46,7 @@ export default class FormLogin extends Component {
             <View style={styles.container}>
                 <UserInputLogin
                     source={usernameImg}
-                    placeholder="Email reset password"
+                    placeholder="Email"
                     autoCapitalize={'none'}
                     returnKeyType={'done'}
                     autoCorrect={false}

@@ -12,7 +12,7 @@ import {
 
 import Wallpaper from '../../components/Wallpaper';
 import LogoLogin from '../../components/LogoLogin';
-import FormForgotPassword from '../../components/FormForgotPassword'
+import FormForgotPassword from '../../components/FormForgotPassword';
 import ButtonResetEmail from "../../components/ButtonResetEmail";
 import ButtonSubmitCancle from '../../components/ButtonSubmitCancle';
 
@@ -33,12 +33,12 @@ export default class ForgotPasswordScreen extends Component {
         return(
             <Wallpaper>
                 <LogoLogin/>
-                <FormForgotPassword parentCallback={this.callbackFuncion}/>
+                <FormForgotPassword parentCallback={this.callbackFuncion} />
                 <View style={{
                     flex: 1,
                     flexDirection: 'row',
                 }}>
-                    <ButtonResetEmail style={{flex:1}}
+                    <ButtonResetEmail
                     TextButton='RESET PASSWORD'
                     navigation={this.props.navigation}
                     emailSub={this.state.emailSub}
