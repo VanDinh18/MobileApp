@@ -17,51 +17,49 @@ import User from '../../components/User';
 class SplashScreen extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            userExist: null,
-        };
-        this.returnUser = this.returnUser.bind(this);
     }
-
+    _isMounted = false;
     performTimeConsumingTask = async () => {
         const userData = await AsyncStorage.getItem('userData');
         const data = JSON.parse(userData);
         return new Promise((resolve, reject) => {
             setTimeout(
                 () => { resolve(data) },
-                2000)
+                1000)
         })
     }
-    returnUser(email){
-        var array = this.state.userExist;
-        for (var i = 0; i < array.length; i++) {
-            if (email == array[i].email) {
-                User.username = array[i].username;
-                User.email = array[i].email;
-            }
-        }
-        console.log(User);
-    }
-
-    async componentDidMount() {
-        // Preload data from an external API
-        // Preload data using AsyncStorage
-        firebase.database().ref('/users').on("value", snapshot => {
-            this.setState({ userExist: Object.values(snapshot.val()) });
+    returnUser = (email) => {
+        return new Promise((resolve, reject) => {
+            var ref = firebase.database().ref('users');
+            ref.on("value", snapshot => {
+                var arr = Object.values(snapshot.val());
+                for (var i = 0; i < arr.length; i++) {
+                    if (email == arr[i].email) {
+                        User.username = arr[i].username;
+                        User.email = arr[i].email;
+                    }
+                }
+                resolve(User);
+            });
         });
-
+    }
+    componentDidMount = async () => {
         const data = await this.performTimeConsumingTask();
         if (data !== null) {
-            //console.log(JSON.parse(data));
-            /** */
-            this.returnUser(JSON.parse(data).email);
+            this._isMounted = true;
+            if (this._isMounted) {
+                const user = await this.returnUser(JSON.parse(data).email)
+                console.log(user);
+            }
             this.props.navigation.navigate('Main');
         }
         else {
             this.props.navigation.navigate('LoginScreen');
         }
     }
-
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
     render() {
         return (
             <View style={styles.container}>
