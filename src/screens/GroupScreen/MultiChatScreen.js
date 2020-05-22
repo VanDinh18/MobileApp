@@ -9,13 +9,18 @@ import {
     FlatList,
     Image,
     Dimensions,
+    Alert,
 } from 'react-native';
 import firebase from '@react-native-firebase/app';
+import { imagePickerOptions, uploadFileToFireBase } from '../../utils';
+import ImagePicker from 'react-native-image-picker';
+
 import User from '../../components/User';
 import ItemFlatListMessageGroup from '../../components/ItemFlatListMessageGroup';
 import goback from '../../assets/images/goback.png';
 import smallcircle from '../../assets/images/smallcircle.png';
 import send from '../../assets/images/send.png';
+import upload from '../../assets/images/upload.png';
 
 class MultiChatScreen extends Component {
     constructor(props) {
@@ -60,6 +65,7 @@ class MultiChatScreen extends Component {
             var msgId = Root.child(this.state.group.chatkey).child('content').push().key;
             var updates = {};
             var message = {
+                checkimage: 0,
                 message: this.state.textMessage,
                 time: firebase.database.ServerValue.TIMESTAMP,
                 from: User.username,
@@ -71,7 +77,57 @@ class MultiChatScreen extends Component {
             this.setState({ textMessage: '' });
         }
     }
-    componentDidMount = () => {
+    monitorFileUpload = (uploadTask) => {
+        var chatkey = this.state.group.chatkey;
+        var members = this.state.group.members;
+        uploadTask.on('state_changed', function (snapshot) {
+            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log('Upload is ' + progress + '% done');
+            switch (snapshot.state) {
+                case firebase.storage.TaskState.PAUSED:
+                    console.log('Upload is paused');
+                    break;
+                case firebase.storage.TaskState.RUNNING:
+                    console.log('Upload is running');
+                    break;
+            }
+        },
+            function (error) {
+
+            },
+            function () {
+                uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
+                    var Root = firebase.database().ref('groups').child(User.username);
+                    var msgId = Root.child(chatkey).child('content').push().key;
+                    var updates = {};
+                    var message = {
+                        checkimage: 1,
+                        message: downloadURL,
+                        time: firebase.database.ServerValue.TIMESTAMP,
+                        from: User.username,
+                    };
+                    for (var i = 0; i < members.length; i++) {
+                        updates['groups/' + members[i] + '/' + chatkey + '/' + 'content' + '/' + msgId] = message;
+                    }
+                    firebase.database().ref().update(updates);
+                });
+            });
+
+    };
+    uploadFile = () => {
+        ImagePicker.launchImageLibrary(imagePickerOptions, response => {
+            if (response.didCancel) {
+                Alert.alert('Hủy đăng ảnh');
+            } else if (response.error) {
+                Alert.alert('Đã xảy ra lỗi: ', response.error);
+            } else {
+                const uploadTask = uploadFileToFireBase(response);
+                this.monitorFileUpload(uploadTask);
+            }
+        }
+        );
+    }
+    componentDidMount = async () => {
         this._isMounted = true;
         var Root = null;
         var newRoot = null;
@@ -90,6 +146,7 @@ class MultiChatScreen extends Component {
             Root.off('value');
         }
     }
+    //fix bug
     componentWillUnmount() {
         this._isMounted = false;
     }
@@ -120,7 +177,7 @@ class MultiChatScreen extends Component {
                         }}>
                         <View style={{ flex: 1 }}>
                             <Image
-                                style={{ height: 50, width: 50, borderRadius: 50, alignItems: 'center', justifyContent: 'center' }}
+                                style={{ height: DEVICE_WIDTH / 9, width: DEVICE_WIDTH / 9, borderRadius: DEVICE_WIDTH / 18, alignItems: 'center', justifyContent: 'center' }}
                                 source={this.state.group.groupavatar ? { uri: this.state.group.groupavatar } : null}
                             />
                         </View>
@@ -131,7 +188,6 @@ class MultiChatScreen extends Component {
                                 {this.state.group.groupname}
                             </Text>
                         </View>
-
                     </View>
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                         <TouchableOpacity
@@ -142,7 +198,7 @@ class MultiChatScreen extends Component {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <KeyboardAvoidingView style={styles.bodyMessage}>
+                <View style={styles.bodyMessage}>
                     <FlatList
                         data={this.state.Data}
                         renderItem={({ item, index }) => (
@@ -152,8 +208,15 @@ class MultiChatScreen extends Component {
                                 Data={this.state.Data} />
                         )}
                         keyExtractor={(item, index) => index.toString()} />
-                </KeyboardAvoidingView>
+                </View>
                 <View style={styles.wrapperInputMessage}>
+                    <TouchableOpacity
+                        style={styles.buttonUpload}
+                        onPress={() => this.uploadFile()}>
+                        <Image
+                            source={upload}
+                            style={{ height: 25, width: 25, tintColor: '#66b3ff' }} />
+                    </TouchableOpacity>
                     <TextInput
                         style={styles.inputMessage}
                         placeholder='Nhập tin nhắn...'
@@ -163,7 +226,7 @@ class MultiChatScreen extends Component {
                         style={styles.buttonSend}
                         onPress={() => this.sendMessage()}>
                         <Image
-                            style={{ height: 30, width: 30, tintColor: '#66b3ff' }}
+                            style={{ height: 25, width: 25, tintColor: '#66b3ff' }}
                             source={send} />
                     </TouchableOpacity>
                 </View>
@@ -197,11 +260,15 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    buttonUpload: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     inputMessage: {
-        flex: 5,
-        width: 0.86 * DEVICE_WIDTH,
+        flex: 6,
         height: 40,
-        marginHorizontal: 20,
+        marginHorizontal: 10,
         paddingLeft: 20,
         borderRadius: 20,
         backgroundColor: 'white'

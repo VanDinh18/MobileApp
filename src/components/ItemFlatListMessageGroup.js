@@ -19,6 +19,7 @@ class ItemFlatListMessageGroup extends Component {
         super(props);
         this.state = {
             item: {
+                checkimage: this.props.item.checkimage,
                 message: this.props.item.message,
                 from: this.props.item.from,
                 time: this.props.item.time,
@@ -26,8 +27,11 @@ class ItemFlatListMessageGroup extends Component {
             index: this.props.index,
             Data: this.props.Data,
             show: true,
+            height: 0,
+            width: 0,
         };
     }
+    _isMounted = false;
     convertTime = (time) => {
         let d = new Date(time);
         let c = new Date();
@@ -48,19 +52,37 @@ class ItemFlatListMessageGroup extends Component {
             }
         }
     }
-    async getAvatar() {
+    getAvatar() {
         if (this.state.item.from !== User.username) {
-            var Root = firebase.database().ref('users').child(this.state.item.from);
-            var avatar = '';
-            await Root.once('value', function (value) {
-                avatar = value.val().avatar;
-            });
-            this.setState({ avatar: avatar });
+            return new Promise((resolve, reject) => {
+                const Root = firebase.database().ref('users').child(this.state.item.from);
+                Root.once('value', function (value) {
+                    resolve(value.val().avatar);
+                });
+            })
         }
     }
-    componentDidMount() {
-        this.show();
-        this.getAvatar();
+    componentDidMount = async () => {
+        this._isMounted = true;
+        if (this._isMounted) {
+            this.show();
+            const data = await this.getAvatar();
+            this.setState({
+                avatar: data,
+            });
+            if (this.state.item.checkimage == 1) {
+                Image.getSize(this.state.item.message, (width, height) => {
+                    this.setState({
+                        width: DEVICE_WIDTH * 0.7,
+                        height: Math.ceil(DEVICE_WIDTH * 0.7 * height / width) - 1,
+                    })
+                });
+            }
+        }
+    }
+    //con fix bug tiep
+    componentWillUnmount() {
+        this._isMounted = false;
     }
     render() {
         const { item } = this.props;
@@ -92,15 +114,25 @@ class ItemFlatListMessageGroup extends Component {
                         backgroundColor: item.from === User.username ? '#cce6ff' : 'white',
                         maxWidth: DEVICE_WIDTH * 0.7,
                     }}>
-                    <View style={{
-                        marginLeft: 8,
-                        marginRight: 8,
-                        marginTop: 5,
-                        marginBottom: 5,
-                    }}>
-                        <Text style={{ fontSize: 16 }}>{this.state.item.message}</Text>
-                        <Text style={{ fontSize: 10, color: '#8c8c8c' }}>{this.convertTime(item.time)}</Text>
-                    </View>
+
+                    {this.state.item.checkimage == 1
+                        ?
+                        <View>
+                            <Image
+                                style={{ height: this.state.height, width: this.state.width, borderRadius: 10 }}
+                                source={this.state.item.message ? { uri: this.state.item.message } : null} />
+                        </View>
+                        :
+                        <View style={{
+                            marginLeft: 8,
+                            marginRight: 8,
+                            marginTop: 5,
+                            marginBottom: 5,
+                        }}>
+                            <Text style={{ fontSize: 16 }}>{this.state.item.message}</Text>
+                            <Text style={{ fontSize: 10, color: '#8c8c8c' }}>{this.convertTime(item.time)}</Text>
+                        </View>
+                    }
                 </View>
             </View>
         )

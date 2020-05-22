@@ -31,18 +31,26 @@ class ItemFlatListGroup extends Component {
     }
     renderLastMessage(content) {
         if (typeof content !== 'undefined') {
-            // var a = Object.values(content).sort(function (a, b) {
-            //     return a.time - b.time;
-            // });
             var a = Object.values(content);
             var n = a.length;
-            return (
-                <Text
-                    style={{ flex: 1, textAlignVertical: 'top', fontSize: 14, fontWeight: '100', color: '#b3b3b3' }}
-                    numberOfLines={1}>
-                    {a[n - 1].message}
-                </Text>
-            )
+            if (a[n - 1].checkimage == 1) {
+                return (
+                    <Text
+                        style={{ flex: 1, textAlignVertical: 'top', fontSize: 14, fontWeight: '100', color: '#b3b3b3' }}
+                        numberOfLines={1}>
+                        {a[n - 1].from} đã gửi 1 ảnh đến nhóm
+                    </Text>
+                )
+            }
+            else {
+                return (
+                    <Text
+                        style={{ flex: 1, textAlignVertical: 'top', fontSize: 14, fontWeight: '100', color: '#b3b3b3' }}
+                        numberOfLines={1}>
+                        {a[n - 1].message}
+                    </Text>
+                )
+            }
         }
         else
             return (
@@ -103,7 +111,7 @@ class ItemFlatListGroup extends Component {
                     onPress={() => this.gotoMultiChatScreen(navigation, chatkey, members, groupname, groupavatar, content)}>
                     <View style={styles.avatar}>
                         <Image
-                            style={{ height: 50, width: 50, borderRadius: 50 }}
+                            style={{ height: DEVICE_WIDTH / 8, width: DEVICE_WIDTH / 8, borderRadius: DEVICE_WIDTH / 16 }}
                             source={groupavatar ? { uri: groupavatar } : null} />
                     </View>
                     <View style={styles.title}>
@@ -130,7 +138,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'row',
-        height: DEVICE_HEIGHT / 10,
+        height: DEVICE_HEIGHT / 9,
     },
     avatar: {
         flex: 1.2,
