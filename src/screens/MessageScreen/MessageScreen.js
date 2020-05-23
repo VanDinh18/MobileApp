@@ -8,130 +8,165 @@ import {
     FlatList,
     SafeAreaView,
     Image,
+    TextInput,
 } from 'react-native';
-import Search from '../../components/Search';
 import '@react-native-firebase/database';
 import firebase from '@react-native-firebase/app';
 import User from '../../components/User';
 import ItemFlatListFriend from '../../components/ItemFlatListFriend';
+import ItemFlatListFriendisSelected from '../../components/ItemFlatListFriendisSelected';
+
+import search from '../../assets/images/search.png';
+import deleteImg from '../../assets/images/delete.png';
 
 class MessageScreen extends Component {
     constructor(props) {
         super(props);
-        this.searchResult = []
-        this.listContact = []
-        this.isFetching = false
         this.state = {
-            DATA: [],
-            searchResult: [],
+            valueSearch: '',
+            userInFriendList: [],
+            alluser: [],
+            searchData: [],
             searching: false,
-            isFetching: false
+        };
+        this.filterSearch = this.filterSearch.bind(this);
+        this.closeSearch = this.closeSearch.bind(this);
+    }
+    _isMounted = false;
+    filterSearch(text) {
+        this.setState({ valueSearch: text });
+        if (text.length > 0) {
+            this.setState({ searching: true });
         }
+        else {
+            this.setState({ searching: false });
+        }
+        const newData = this.state.alluser.filter(function (item) {
+            const itemData = item.title.normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/đ/g, "d")
+                .replace(/Đ/g, "D")
+                .toUpperCase()
+                .trim();
+            const textData = text.normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/đ/g, "d")
+                .replace(/Đ/g, "D")
+                .toUpperCase()
+                .trim();
+            return itemData.indexOf(textData) > -1
+        });
+        this.setState({ searchData: newData });
     }
-
-    async componentDidMount() {
-        try{
-            await this.loadUser();
-        }catch(err) {console.log('err: ' + err)}
-    }
-
-    clickUserSearched(username, avatarImg) {
-        this.props.navigation.navigate('ChatScreen', { name: username, avatar: avatarImg });
-    }
-
     closeSearch() {
-        this.setState({ searching: false })
+        this.setState({
+            searching: false,
+            valueSearch: '',
+        });
     }
-
-    onRefresh() {
-        this.loadUser();
-    }
-
-    searching(text) {
-        if(text == ""){
-            this.setState({searching: false})
-            return;
-        }
-        let self = this
-        self.searchResult = []
+    getAllUser = () => {
         return new Promise((resolve, reject) => {
-            firebase.database().ref('/users').orderByChild("username").startAt(text).endAt(text + "\uf8ff").once('value', snapshot => {
-                if(snapshot.val() == null){
-                    self.searchResult.push({id: "-1", notfound: true});
-                }else{
-                    let i = 0;
-                    Object.values(snapshot.val()).forEach(function (user) {
-                        var item = {
-                            id: i,
-                            avatar: user["avatar"],
-                            email: user["email"],
-                            username: user["username"]
-                        };
-                        self.searchResult.push(item);
-                        i++;
-                    })
-                }
-                self.setState({ searching: true })
-                resolve();
+            var i = 0;
+            var array = [];
+            const Root = firebase.database().ref('users')
+            Root.on('value', function (snapshot) {
+                snapshot.forEach(function (childs) {
+                    var item = {
+                        id: i,
+                        title: childs.key,
+                        content: childs.val(),
+                    };
+                    array.push(item);
+                    i++;
+                })
+                resolve(array);
             })
         })
     }
-
-    async loadUser(){
-        var arr = [];
-        var i = 0;
-        var message_firebase = firebase.database().ref('messages');
-        var newRoot = message_firebase.child(User.username);
-        await newRoot.once('value', function (snapshot) {
-            snapshot.forEach(function (childs) {
-                var item = {
-                    id: i,
-                    title: childs.key,
-                };
-                arr.push(item);
-                i++;
+    getUserInFriendList = () => {
+        return new Promise((resolve, reject) => {
+            var i = 0;
+            var array = [];
+            const Root = firebase.database().ref('messages').child(User.username);
+            Root.on('value', function (snapshot) {
+                snapshot.forEach(function (childs) {
+                    var item = {
+                        id: i,
+                        title: childs.key,
+                        content: childs.val(),
+                    };
+                    array.push(item);
+                    i++;
+                })
+                resolve(array);
             })
         })
-        this.isFetching = false
-        this.setState({ DATA: arr });
     }
-
-
-
-
-    renderUser(user) {
-        if (this.state.searching && user["item"]["notfound"]) {
-            return (
-                <Text style={{fontSize: 20, margin: 10}}>Không tìm thấy</Text>
-            )
-        }else if (this.state.searching) {
-            return (
-                <TouchableOpacity onPress={this.clickUserSearched.bind(this, user["item"]["username"], user["item"]["avatar"])}>
-                    <Text style={styles.userBasic}>{user["item"]["username"]}</Text>
-                </TouchableOpacity>
-            )
+    componentDidMount = async () => {
+        this._isMounted = true;
+        if (this._isMounted) {
+            const alluser = await this.getAllUser();
+            const userInFriendList = await this.getUserInFriendList();
+            userInFriendList.forEach(item => {
+                item.content = Object.values(item.content).sort(function (a, b) {
+                    return a.time - b.time;
+                })
+            });
+            userInFriendList.sort(function (a, b) {
+                var length_a = Object.values(a.content).length;
+                var length_b = Object.values(b.content).length;
+                return Object.values(b.content)[length_b - 1].time - Object.values(a.content)[length_a - 1].time
+            });
+            this.setState({
+                userInFriendList: userInFriendList,
+                alluser: alluser,
+            })
         }
-        return (
-            <ItemFlatListFriend
-                title={user["item"]["title"]}
-                navigation={this.props.navigation}
-            />
-        )
     }
-
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
     render() {
         return (
             <SafeAreaView style={styles.container} >
                 <View style={styles.wrapperSearch}>
-                    <Search searchingCb={this.searching.bind(this)} closeSearch={this.closeSearch.bind(this)} />
+                    <Image
+                        style={styles.imageSearch}
+                        source={search} />
+                    <TextInput
+                        style={styles.input}
+                        placeholder='Tìm kiếm nhóm'
+                        onChangeText={(text) => this.filterSearch(text)}
+                        value={this.state.valueSearch} />
+                    <TouchableOpacity
+                        style={styles.wrapperDelete}
+                        onPress={() => this.closeSearch()}>
+                        <Image
+                            style={styles.imageDelete}
+                            source={deleteImg} />
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.list}>
                     <FlatList
-                        data={this.state.searching ? this.searchResult : this.state.DATA}
-                        renderItem={this.renderUser.bind(this)}
+                        data={this.state.searching ? this.state.searchData : this.state.userInFriendList}
+                        renderItem={
+                            this.state.searching
+                                ?
+                                ({ item }) => (
+                                    <ItemFlatListFriendisSelected
+                                        title={item.title}
+                                        navigation={this.props.navigation}
+                                        alluser={this.state.alluser} />
+                                )
+                                :
+                                ({ item }) => (
+                                    <ItemFlatListFriend
+                                        title={item.title}
+                                        content={item.content}
+                                        navigation={this.props.navigation} />
+                                )
+                        }
                         keyExtractor={(item) => item.id.toString()}
-                        onRefresh={() => this.onRefresh()}
-                        refreshing={this.isFetching}
                     />
                 </View>
             </SafeAreaView>
@@ -148,24 +183,42 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
     },
     wrapperSearch: {
-        height: 55,
-        width: DEVICE_WIDTH,
-        paddingBottom: 10,
-        paddingTop: 10,
-        marginBottom: 10,
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
         backgroundColor: '#5a94f2',
     },
+    input: {
+        backgroundColor: 'rgba(255, 255, 255, 0.4)',
+        width: 0.9 * DEVICE_WIDTH,
+        height: 0.06 * DEVICE_HEIGHT,
+        paddingLeft: 0.1 * DEVICE_WIDTH,
+        paddingTop: 0.015 * DEVICE_HEIGHT,
+        borderRadius: 20,
+        zIndex: 0,
+        position: 'absolute',
+    },
+    imageSearch: {
+        position: 'absolute',
+        zIndex: 1,
+        width: 0.06 * DEVICE_WIDTH,
+        height: 0.06 * DEVICE_WIDTH,
+        left: 0.08 * DEVICE_WIDTH,
+        top: 0.025 * DEVICE_HEIGHT,
+    },
+    wrapperDelete: {
+        zIndex: 2,
+        position: 'absolute',
+        right: 0.08 * DEVICE_WIDTH,
+        top: 0.025 * DEVICE_HEIGHT,
+    },
+    imageDelete: {
+        width: 0.06 * DEVICE_WIDTH,
+        height: 0.06 * DEVICE_WIDTH,
+    },
     list: {
-        flex: 1,
+        flex: 10,
     },
-    title: {
-        fontSize: 20,
-        fontWeight: "bold"
-    },
-    userBasic: {
-        fontSize: 20,
-        margin: 10,
-    }
 })
 
 export default MessageScreen;

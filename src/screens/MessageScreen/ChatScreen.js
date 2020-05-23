@@ -11,14 +11,18 @@ import {
     KeyboardAvoidingView,
 } from 'react-native';
 
+import { imagePickerOptions, uploadFileToFireBase } from '../../utils';
+import ImagePicker from 'react-native-image-picker';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/auth';
 import '@react-native-firebase/database';
 import User from '../../components/User';
+import ItemFlatListMessage from '../../components/ItemFlatListMessage';
+
+import send from '../../assets/images/send.png';
+import upload from '../../assets/images/upload.png';
 import goback from '../../assets/images/goback.png';
 import smallcircle from '../../assets/images/smallcircle.png';
-import ItemFlatListMessage from '../../components/ItemFlatListMessage';
-import send from '../../assets/images/send.png';
 
 export default class ChatScreen extends Component {
     _isMounted = false;
@@ -54,6 +58,7 @@ export default class ChatScreen extends Component {
             var msgId = firebase.database().ref('messages').child(User.username).child(titleUsername).push().key;
             var updates = {};
             var message = {
+                checkimage: 0,
                 message: this.state.textMessage,
                 time: firebase.database.ServerValue.TIMESTAMP,
                 from: User.username,
@@ -63,6 +68,53 @@ export default class ChatScreen extends Component {
             await firebase.database().ref().update(updates);
             this.setState({ textMessage: '' });
         }
+    }
+    monitorFileUpload = (uploadTask) => {
+        var titleUsername = this.state.person.name;
+        uploadTask.on('state_changed',
+            function (snapshot) {
+                var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log('Upload is ' + progress + '% done');
+                switch (snapshot.state) {
+                    case firebase.storage.TaskState.PAUSED:
+                        console.log('Upload is paused');
+                        break;
+                    case firebase.storage.TaskState.RUNNING:
+                        console.log('Upload is running');
+                        break;
+                }
+            },
+            function (error) {
+
+            },
+            function () {
+                uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
+                    var msgId = firebase.database().ref('messages').child(User.username).child(titleUsername).push().key;
+                    var updates = {};
+                    var message = {
+                        checkimage: 1,
+                        message: downloadURL,
+                        time: firebase.database.ServerValue.TIMESTAMP,
+                        from: User.username,
+                    }
+                    updates['messages/' + User.username + '/' + titleUsername + '/' + msgId] = message;
+                    updates['messages/' + titleUsername + '/' + User.username + '/' + msgId] = message;
+                    firebase.database().ref().update(updates);
+                });
+            });
+    };
+    uploadFile = () => {
+        ImagePicker.launchImageLibrary(imagePickerOptions, response => {
+            if (response.didCancel) {
+                Alert.alert('Hủy đăng ảnh');
+            } else if (response.error) {
+                Alert.alert('Đã xảy ra lỗi: ', response.error);
+            } else {
+                const uploadTask = uploadFileToFireBase(response);
+                this.monitorFileUpload(uploadTask);
+            }
+        }
+        );
     }
 
     componentDidMount() {
@@ -107,12 +159,16 @@ export default class ChatScreen extends Component {
                         }}>
                         <View style={{ flex: 1 }}>
                             <Image
-                                style={{ height: 50, width: 50, borderRadius: 50, alignItems: 'center', justifyContent: 'center' }}
+                                style={{ height: DEVICE_WIDTH / 9, width: DEVICE_WIDTH / 9, borderRadius: DEVICE_WIDTH / 18, alignItems: 'center', justifyContent: 'center' }}
                                 source={this.state.person.avatar ? { uri: this.state.person.avatar } : null}
                             />
                         </View>
                         <View style={{ flex: 4 }}>
-                            <Text style={{ fontSize: 18, color: 'white' }}>{this.state.person.name}</Text>
+                            <Text
+                                style={{ fontSize: 18, color: 'white' }}
+                                numberOfLines={1}>
+                                {this.state.person.name}
+                            </Text>
                         </View>
                     </View>
 
@@ -126,7 +182,7 @@ export default class ChatScreen extends Component {
                     </View>
                 </View>
 
-                <KeyboardAvoidingView style={styles.bodyMessage}>
+                <View style={styles.bodyMessage}>
                     <FlatList
                         data={this.state.Data}
                         renderItem={({ item }) => (
@@ -134,12 +190,19 @@ export default class ChatScreen extends Component {
                                 item={item} />
                         )}
                         keyExtractor={(item, index) => index.toString()} />
-                </KeyboardAvoidingView>
+                </View>
 
                 <View style={styles.wrapperInputMessage}>
+                    <TouchableOpacity
+                        style={styles.buttonUpload}
+                        onPress={() => this.uploadFile()}>
+                        <Image
+                            source={upload}
+                            style={{ height: 25, width: 25, tintColor: '#66b3ff' }} />
+                    </TouchableOpacity>
                     <TextInput
                         style={styles.inputMessage}
-                        placeholder='Your message'
+                        placeholder='Nhập tin nhắn...'
                         value={this.state.textMessage}
                         onChangeText={this.handleChange('textMessage')}
                     />
@@ -147,7 +210,7 @@ export default class ChatScreen extends Component {
                         style={styles.buttonSend}
                         onPress={() => this.sendMessage(this.state.person.name)}>
                         <Image
-                            style={{ height: 30, width: 30, tintColor: '#66b3ff' }}
+                            style={{ height: 25, width: 25, tintColor: '#66b3ff' }}
                             source={send} />
                     </TouchableOpacity>
                 </View>
@@ -180,11 +243,15 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    buttonUpload: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     inputMessage: {
-        flex: 5,
-        width: 0.86 * DEVICE_WIDTH,
+        flex: 6,
         height: 40,
-        marginHorizontal: 20,
+        marginHorizontal: 10,
         paddingLeft: 20,
         borderRadius: 20,
         backgroundColor: 'white'

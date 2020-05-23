@@ -10,7 +10,6 @@ import {
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/auth';
 import '@react-native-firebase/database';
-import avatarImg from '../assets/images/avatar.jpg';
 
 class ItemFlatListFriend extends Component {
     constructor(props) {
@@ -20,30 +19,83 @@ class ItemFlatListFriend extends Component {
             avatarImg: '',
         };
         this.gotoMessage = this.gotoMessage.bind(this);
+        this.renderLastMessage = this.renderLastMessage.bind(this);
+        this.renderTime = this.renderTime.bind(this);
     }
-
+    _isMounted = false;
     gotoMessage(navigation) {
         navigation.navigate('ChatScreen', { name: this.state.title, avatar: this.state.avatarImg });
     }
-
-    async componentDidMount() {
-        const avt = firebase.database().ref('/users/' + this.state.title);
-        await avt.once('value', (snapshot) => {
-            this.setState({ avatarImg: snapshot.val().avatar });
-        });
+    getAvatar = () => {
+        return new Promise((resolve, reject) => {
+            const Root = firebase.database().ref('/users/' + this.state.title);
+            Root.on('value', snapshot => {
+                resolve(snapshot.val().avatar);
+            })
+        })
     }
-
+    renderLastMessage(content) {
+        var a = Object.values(content);
+        var n = a.length;
+        if (a[n - 1].checkimage == 1) {
+            return (
+                <Text
+                    style={{ flex: 1, textAlignVertical: 'top', fontSize: 14, fontWeight: '100', color: '#b3b3b3' }}
+                    numberOfLines={1}>
+                    {a[n - 1].from} đã gửi 1 ảnh đến bạn
+                </Text>
+            )
+        }
+        else {
+            return (
+                <Text
+                    style={{ flex: 1, textAlignVertical: 'top', fontSize: 14, fontWeight: '100', color: '#b3b3b3' }}
+                    numberOfLines={1}>
+                    {a[n - 1].message}
+                </Text>
+            )
+        }
+    }
+    renderTime(content) {
+        var a = Object.values(content);
+        var n = a.length;
+        var today = new Date();
+        var date = new Date(a[n - 1].time);
+        var year = date.getFullYear();
+        var month = ("0" + (date.getMonth() + 1)).substr(-2);
+        var day = ("0" + date.getDate()).substr(-2);
+        var hour = ("0" + date.getHours()).substr(-2);
+        var minutes = ("0" + date.getMinutes()).substr(-2);
+        var result = '';
+        if (today.getDay() !== date.getDay()) {
+            result = day + " thg " + month;
+        }
+        else
+            result = hour + ":" + minutes;
+        return (
+            <Text style={{ fontSize: 14, color: '#b3b3b3' }}>{result}</Text>
+        )
+    }
+    componentDidMount = async () => {
+        this._isMounted = true;
+        if (this._isMounted) {
+            const data = await this.getAvatar();
+            this.setState({ avatarImg: data });
+        }
+    }
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
     render() {
-        const { navigation } = this.props;
+        const { navigation, content } = this.props;
         return (
             <View style={{ flex: 1 }}>
                 <TouchableOpacity
                     style={styles.container}
-                    onPress={() => this.gotoMessage(navigation)}
-                >
+                    onPress={() => this.gotoMessage(navigation)}>
                     <View style={styles.avatar}>
                         <Image
-                            style={{ height: 50, width: 50, borderRadius: 50 }}
+                            style={{ height: DEVICE_WIDTH / 8, width: DEVICE_WIDTH / 8, borderRadius: DEVICE_WIDTH / 16 }}
                             source={this.state.avatarImg ? { uri: this.state.avatarImg } : null}
                         />
                     </View>
@@ -51,12 +103,10 @@ class ItemFlatListFriend extends Component {
                         <Text style={{ flex: 1, textAlignVertical: 'bottom', fontSize: 18, fontWeight: "900" }}>
                             {this.state.title}
                         </Text>
-                        <Text style={{ flex: 1, textAlignVertical: 'top', fontSize: 14, fontWeight: '100', color: '#b3b3b3' }}>
-                            Last Message
-                        </Text>
+                        {this.renderLastMessage(content)}
                     </View>
                     <View style={styles.time}>
-                        <Text style={{ fontSize: 14, color: '#b3b3b3' }}>11:12</Text>
+                        {this.renderTime(content)}
                     </View>
                 </TouchableOpacity>
             </View>
@@ -71,7 +121,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'row',
-        height: DEVICE_HEIGHT / 10,
+        height: DEVICE_HEIGHT / 9,
     },
     avatar: {
         flex: 1.2,
