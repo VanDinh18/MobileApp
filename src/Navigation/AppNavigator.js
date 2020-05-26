@@ -10,6 +10,9 @@ import TabNavigator from './TabNavigator';
 import MultiChatScreen from '../screens/GroupScreen/MultiChatScreen';
 import MultiChatSettingScreen from '../screens/GroupScreen/MultiChatSettingScreen';
 import AddFriendToGroupExistScreen from '../screens/GroupScreen/AddFriendToGroupExistScreen';
+import Home from '../screens/CallScreen/Home';
+import Video from '../screens/CallScreen/Video';
+
 const AppNavigator = createSwitchNavigator(
     {
         SplashScreen: { screen: SplashScreen },
@@ -21,9 +24,12 @@ const AppNavigator = createSwitchNavigator(
         ChatScreen: { screen: ChatScreen },
         ChatSettingScreen: { screen: ChatSettingScreen },
         AddFriendToGroupScreen: { screen: AddFriendToGroupScreen },
-        MultiChatScreen: {screen: MultiChatScreen},
-        MultiChatSettingScreen: {screen: MultiChatSettingScreen},
-        AddFriendToGroupExistScreen: {screen: AddFriendToGroupExistScreen},
+        MultiChatScreen: { screen: MultiChatScreen },
+        MultiChatSettingScreen: { screen: MultiChatSettingScreen },
+        AddFriendToGroupExistScreen: { screen: AddFriendToGroupExistScreen },
+
+        Home: { screen: Home },
+        Video: { screen: Video },
     },
     {
         initialRouteName: 'SplashScreen',
