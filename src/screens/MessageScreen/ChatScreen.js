@@ -228,36 +228,37 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     header: {
-        flex: 1,
+        height: 60,
         flexDirection: 'row',
         backgroundColor: '#66b3ff',
     },
     bodyMessage: {
-        flex: 10,
+        flex: 1,
         backgroundColor: '#f2f2f2',
     },
     wrapperInputMessage: {
-        flex: 1,
+        height: 50,
+        marginBottom: 10,
         flexDirection: 'row',
         backgroundColor: '#f2f2f2',
-        justifyContent: 'center',
+        justifyContent: 'space-around',
         alignItems: 'center',
     },
     buttonUpload: {
-        flex: 1,
+        width: 50,
         justifyContent: 'center',
         alignItems: 'center',
     },
     inputMessage: {
-        flex: 6,
+        flex: 1,        
         height: 40,
-        marginHorizontal: 10,
+        // marginHorizontal: 10,
         paddingLeft: 20,
         borderRadius: 20,
         backgroundColor: 'white'
     },
     buttonSend: {
-        flex: 1,
+        width: 50,
         justifyContent: 'center',
         alignItems: 'center',
     }

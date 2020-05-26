@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
     },
     wrapperSearch: {
-        flex: 1,
+        height: 60,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#5a94f2',

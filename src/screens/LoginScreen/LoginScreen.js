@@ -4,7 +4,7 @@ import {
     View,
     Text,
     TouchableOpacity,
-    TextInput,
+    Dimensions,
     StyleSheet,
     KeyboardAvoidingView,
 } from 'react-native';
@@ -15,6 +15,8 @@ import SignUpSectionLogin from '../../components/SignupSectionLogin';
 import ButtonSubmitLogin from '../../components/ButtonSubmitLogin';
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+
+const HEIGHT = Dimensions.get('window').height
 
 class LoginScreen extends Component {
     constructor(props) {
@@ -35,14 +37,16 @@ class LoginScreen extends Component {
         return (
             <Wallpaper>
                 <LogoLogin />
-                <FormLogin parentCallback={this.callbackFuncion} />
-                <ButtonSubmitLogin
-                    TextButton='LOGIN'
-                    navigation={this.props.navigation}
-                    emailLog={this.state.emailLogin}
-                    passwordLog={this.state.passwordLogin}
-                />
-                <SignUpSectionLogin navigation={this.props.navigation} />
+                <View style={{height: HEIGHT * 0.35, marginBottom: 50}}>
+                    <FormLogin parentCallback={this.callbackFuncion} />
+                    <ButtonSubmitLogin
+                        TextButton='LOGIN'
+                        navigation={this.props.navigation}
+                        emailLog={this.state.emailLogin}
+                        passwordLog={this.state.passwordLogin}
+                    />
+                    <SignUpSectionLogin navigation={this.props.navigation} />
+                </View>
             </Wallpaper>
         );
     }
