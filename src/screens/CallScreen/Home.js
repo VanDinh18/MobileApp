@@ -1,8 +1,9 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
-import { View, StyleSheet, Text, TextInput, TouchableOpacity, Platform } from 'react-native';
+import { View, StyleSheet, Text, TextInput, TouchableOpacity, Platform, Alert } from 'react-native';
 import requestCameraAndAudioPermission from './permission';
+import io from 'socket.io-client';
 
 class Home extends Component {
     constructor(props) {
@@ -16,6 +17,10 @@ class Home extends Component {
                 console.log('requested!');
             });
         }
+        this.socket = io("https://fierce-bayou-19142.herokuapp.com/", { jsonp: false });
+        this.socket.on("server-send", function (data) {
+            Alert.alert(data);
+        })
     }
 
     componentDidMount() {
@@ -28,15 +33,15 @@ class Home extends Component {
     handleSubmit = () => {
         let AppID = this.state.AppID;
         let ChannelName = this.state.ChannelName;
-        if (AppID !== '' && ChannelName !== '') {
-            this.props.navigation.navigate(
-                'Video',
-                {
-                    ChannelName: ChannelName,
-                    AppID: AppID,
-                }
-            );
-        }
+        this.socket.emit("client-send", ChannelName);
+
+        // this.props.navigation.navigate(
+        //     'Video',
+        //     {
+        //         ChannelName: ChannelName,
+        //         AppID: AppID,
+        //     }
+        // );
     }
     render() {
         return (

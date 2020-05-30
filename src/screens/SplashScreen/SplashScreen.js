@@ -13,6 +13,7 @@ import firebase from '@react-native-firebase/app';
 import bgSrc from '../../assets/images/logo.png';
 import AsyncStorage from "@react-native-community/async-storage";
 import User from '../../components/User';
+import io from 'socket.io-client';
 
 class SplashScreen extends Component {
     constructor(props) {
