@@ -117,39 +117,34 @@ class SettingsScreen extends Component {
         this.setState({ [key]: val })
     }
     getUser = () => {
-        return new Promise((resolve, reject) => {
-            const Root = firebase.database().ref('users').child(User.username);
-            Root.on('value', snapshot => {
-                var data = snapshot.val();
-                resolve(data);
+        const Root = firebase.database().ref('users').child(User.username);
+        Root.on('value', snapshot => {
+            var data = snapshot.val();
+            this.setState({
+                user: {
+                    username: data.username,
+                    email: data.email,
+                    avatar: data.avatar,
+                    coverimage: data.coverimage,
+                },
             })
         })
     }
     getAllUser = () => {
-        return new Promise((resolve, reject) => {
-            const Root = firebase.database().ref('users');
-            Root.on('value', snapshot => {
-                var data = snapshot.val();
-                resolve(data);
+        const Root = firebase.database().ref('users');
+        Root.on('value', snapshot => {
+            var data = snapshot.val();
+            this.setState({
+                alluser: data,
             })
         })
     }
     componentDidMount = async () => {
         this._isMounted = true;
         if (this._isMounted) {
-            const user = await this.getUser();
-            const alluser = await this.getAllUser();
-            this.setState({
-                user: {
-                    username: user.username,
-                    email: user.email,
-                    avatar: user.avatar,
-                    coverimage: user.coverimage,
-                },
-                alluser: alluser,
-            })
+            this.getUser();
+            this.getAllUser();
         }
-
     }
     componentWillUnmount() {
         this._isMounted = false;
@@ -185,12 +180,12 @@ class SettingsScreen extends Component {
                                 <TouchableOpacity
                                     style={{ flex: 1, flexDirection: 'row' }}
                                     onPress={() => this.setState({ show: true })}>
-                                    <View style={{ flex: 7, marginLeft: 10, justifyContent: 'center', borderBottomColor: '#b3b3b3', borderBottomWidth: 1 }}>
+                                    <View style={{ flex: 7, marginLeft: 20, justifyContent: 'center', borderBottomColor: '#b3b3b3', borderBottomWidth: 1 }}>
                                         <Text style={{ fontSize: 16 }}>Thay đổi tên người dùng</Text>
                                     </View>
                                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                                         <Image
-                                            style={{ height: 20, width: 20, tintColor: '#99ffff'}}
+                                            style={{ height: 20, width: 20, tintColor: '#b3b3b3' }}
                                             source={user_switch} />
                                     </View>
                                 </TouchableOpacity>
@@ -200,7 +195,7 @@ class SettingsScreen extends Component {
                         }
                         {this.state.show
                             ?
-                            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', marginLeft: 10 }}>
+                            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', marginLeft: 20 }}>
                                 <TextInput
                                     style={{ width: DEVICE_WIDTH / 2 }}
                                     underlineColorAndroid='#428AF8'
@@ -225,12 +220,12 @@ class SettingsScreen extends Component {
                         style={{ height: DEVICE_HEIGHT / 12, flexDirection: 'column', justifyContent: 'center' }}
                         onPress={() => this.changeUsername()}>
                         <View style={{ flexDirection: 'row', flex: 1 }}>
-                            <View style={{ flex: 7, justifyContent: 'center', marginLeft: 10, borderBottomColor: '#b3b3b3', borderBottomWidth: 1 }}>
+                            <View style={{ flex: 7, justifyContent: 'center', marginLeft: 20, borderBottomColor: '#b3b3b3', borderBottomWidth: 1 }}>
                                 <Text style={{ fontSize: 16 }}>Thông tin ứng dụng</Text>
                             </View>
                             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                                 <Image
-                                    style={{ height: 20, width: 20, tintColor: '#4dff4d'}}
+                                    style={{ height: 20, width: 20, tintColor: '#b3b3b3' }}
                                     source={info} />
                             </View>
                         </View>
@@ -239,12 +234,12 @@ class SettingsScreen extends Component {
                         style={{ height: DEVICE_HEIGHT / 12, flexDirection: 'column', justifyContent: 'center' }}
                         onPress={this.logout}>
                         <View style={{ flexDirection: 'row', flex: 1 }}>
-                            <View style={{ flex: 7, justifyContent: 'center', marginLeft: 10, borderBottomColor: '#b3b3b3', borderBottomWidth: 1 }}>
+                            <View style={{ flex: 7, justifyContent: 'center', marginLeft: 20, borderBottomColor: '#b3b3b3', borderBottomWidth: 1 }}>
                                 <Text style={{ fontSize: 16 }}>Đăng xuất</Text>
                             </View>
                             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                                 <Image
-                                    style={{ height: 20, width: 20, tintColor: '#9999ff'}}
+                                    style={{ height: 20, width: 20, tintColor: '#b3b3b3' }}
                                     source={logout} />
                             </View>
                         </View>
