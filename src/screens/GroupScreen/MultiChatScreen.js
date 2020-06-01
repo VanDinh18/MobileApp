@@ -151,12 +151,7 @@ class MultiChatScreen extends Component {
         this._isMounted = false;
     }
     render() {
-        const { navigation } = this.props;props.navigation.navigate(
-            'Video',
-            {
-                ChannelName: data,
-            }
-        );
+        const { navigation } = this.props;
         return (
             <View style={styles.wrapper}>
                 <View style={styles.header}>
