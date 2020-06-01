@@ -45,7 +45,7 @@ export default class ChatScreen extends Component {
                 props.navigation.navigate(
                     'AwaitScreen',
                     {
-                        name: props.navigation.state.params.name,
+                        name: data,
                         avatar: props.navigation.state.params.avatar,
                     }
                 )
