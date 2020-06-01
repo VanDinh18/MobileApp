@@ -9,6 +9,7 @@ import {
     Image,
     FlatList,
     KeyboardAvoidingView,
+    Alert,
 } from 'react-native';
 
 import { imagePickerOptions, uploadFileToFireBase } from '../../utils';
@@ -16,6 +17,7 @@ import ImagePicker from 'react-native-image-picker';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/auth';
 import '@react-native-firebase/database';
+import io from 'socket.io-client';
 import User from '../../components/User';
 import ItemFlatListMessage from '../../components/ItemFlatListMessage';
 
@@ -23,6 +25,7 @@ import send from '../../assets/images/send.png';
 import upload from '../../assets/images/upload.png';
 import goback from '../../assets/images/goback.png';
 import smallcircle from '../../assets/images/smallcircle.png';
+import video_call from '../../assets/images/video_call.png';
 
 export default class ChatScreen extends Component {
     _isMounted = false;
@@ -36,6 +39,18 @@ export default class ChatScreen extends Component {
                 avatar: props.navigation.state.params.avatar,
             },
         }
+        this.socket = io("https://fierce-bayou-19142.herokuapp.com/", { jsonp: false });
+        this.socket.on("server-send", function (data) {
+            if (data === User.username) {
+                props.navigation.navigate(
+                    'AwaitScreen',
+                    {
+                        name: props.navigation.state.params.name,
+                        avatar: props.navigation.state.params.avatar,
+                    }
+                )
+            }
+        })
         this.sendMessage = this.sendMessage.bind(this);
         this.goback = this.goback.bind(this);
         this.gotoChatSettingScreen = this.gotoChatSettingScreen.bind(this);
@@ -44,7 +59,17 @@ export default class ChatScreen extends Component {
     goback(navigation) {
         navigation.navigate('MessageScreen');
     }
-
+    gotoVideoCallScreen = (navigation) => {
+        var ChannelName = this.state.person.name;
+        this.socket.emit("client-send", ChannelName);
+        navigation.navigate(
+            'Video',
+            {
+                ChannelName: this.state.person.name,
+                avatar: this.state.person.avatar,
+            }
+        );
+    }
     gotoChatSettingScreen(navigation) {
         navigation.navigate('ChatSettingScreen', { name: this.state.person.name, avatar: this.state.person.avatar });
     }
@@ -174,6 +199,15 @@ export default class ChatScreen extends Component {
 
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                         <TouchableOpacity
+                            onPress={() => this.gotoVideoCallScreen(navigation)}>
+                            <Image
+                                style={{ height: 25, width: 25, tintColor: 'white' }}
+                                source={video_call} />
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <TouchableOpacity
                             onPress={() => this.gotoChatSettingScreen(navigation)}>
                             <Image
                                 style={{ height: 30, width: 30, tintColor: 'white' }}
@@ -250,7 +284,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     inputMessage: {
-        flex: 1,        
+        flex: 1,
         height: 40,
         // marginHorizontal: 10,
         paddingLeft: 20,

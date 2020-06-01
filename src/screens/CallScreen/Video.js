@@ -23,6 +23,7 @@ class Video extends Component {
       uid: Math.floor(Math.random() * 100),                           //Generate a UID for local user
       appid: "0fedc73812c342aead62b3e673222b01",                    //Enter the App ID generated from the Agora Website
       channelName: props.navigation.state.params.ChannelName,        //Channel Name for the current session
+      avatar: props.navigation.state.params.avatar,
       vidMute: false,                             //State variable for Video Mute
       audMute: false,                             //State variable for Audio Mute
       joinSucceed: false,                         //State variable for storing success
@@ -95,7 +96,13 @@ class Video extends Component {
   */
   endCall() {
     RtcEngine.destroy();
-    this.props.navigation.navigate('Home');
+    this.props.navigation.navigate(
+      'ChatScreen',
+      {
+        name: this.state.channelName,
+        avatar: this.state.avatar,
+      }
+    );
   }
   /**
   * @name peerClick

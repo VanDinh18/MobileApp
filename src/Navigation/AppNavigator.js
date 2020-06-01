@@ -12,6 +12,7 @@ import MultiChatSettingScreen from '../screens/GroupScreen/MultiChatSettingScree
 import AddFriendToGroupExistScreen from '../screens/GroupScreen/AddFriendToGroupExistScreen';
 import Home from '../screens/CallScreen/Home';
 import Video from '../screens/CallScreen/Video';
+import AwaitScreen from '../screens/CallScreen/AwaitScreen';
 
 const AppNavigator = createSwitchNavigator(
     {
@@ -30,6 +31,7 @@ const AppNavigator = createSwitchNavigator(
 
         Home: { screen: Home },
         Video: { screen: Video },
+        AwaitScreen: { screen: AwaitScreen },
     },
     {
         initialRouteName: 'SplashScreen',
