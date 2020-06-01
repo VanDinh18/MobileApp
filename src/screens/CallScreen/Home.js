@@ -1,16 +1,18 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
-import React, { Component } from 'react';
+import React, { Component, useReducer } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, Platform, Alert } from 'react-native';
 import requestCameraAndAudioPermission from './permission';
 import io from 'socket.io-client';
+import User from '../../components/User'
 
 class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            navigation: props.navigation,
             AppID: '0fedc73812c342aead62b3e673222b01',                    //Set your APPID here
-            ChannelName: 'test',                                  //Set a default channel or leave blank
+            ChannelName: '',                                  //Set a default channel or leave blank
         };
         if (Platform.OS === 'android') {                    //Request required permissions from Android
             requestCameraAndAudioPermission().then(_ => {
@@ -19,7 +21,26 @@ class Home extends Component {
         }
         this.socket = io("https://fierce-bayou-19142.herokuapp.com/", { jsonp: false });
         this.socket.on("server-send", function (data) {
-            Alert.alert(data);
+            if (data === User.username) {
+                Alert.alert(
+                    'Tiêu đề cảnh báo',
+                    'Thông báo cảnh báo ở đây ...',
+                    [
+                        { text: 'Hỏi tôi sau', onPress: () => console.warn('Hỏi tôi sau đó nhấn') },
+                        { text: 'NO', onPress: () => console.warn('NO Đã nhấn'), kiểu: 'hủy' },
+                        {
+                            text: 'CÓ', onPress: () => {
+                                props.navigation.navigate(
+                                    'Video',
+                                    {
+                                        ChannelName: data,
+                                    }
+                                );
+                            }
+                        },
+                    ]
+                );
+            }
         })
     }
 
@@ -35,17 +56,17 @@ class Home extends Component {
         let ChannelName = this.state.ChannelName;
         this.socket.emit("client-send", ChannelName);
 
-        // this.props.navigation.navigate(
-        //     'Video',
-        //     {
-        //         ChannelName: ChannelName,
-        //         AppID: AppID,
-        //     }
-        // );
+        this.props.navigation.navigate(
+            'Video',
+            {
+                ChannelName: this.state.ChannelName,
+            }
+        );
     }
     render() {
         return (
             <View style={styles.container}>
+
                 <Text style={styles.formLabel}>App ID</Text>
                 <TextInput
                     style={styles.formInput}

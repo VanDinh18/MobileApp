@@ -10,11 +10,16 @@ import {
     ScrollView,
     TextInput,
 } from 'react-native';
+import firebase from '@react-native-firebase/app';
+import '@react-native-firebase/database';
+
 import done from '../../assets/images/done.png';
 import goback from '../../assets/images/goback.png';
 import chatsetting from '../../assets/images/chatsetting.png';
-import firebase from '@react-native-firebase/app';
-import '@react-native-firebase/database';
+import change_groupname_icon from '../../assets/images/change_groupname_icon.png';
+import change_background_group_icon from '../../assets/images/change_background_group_icon.png';
+import add_friend_group_exist from '../../assets/images/add_friend_group_exist.png';
+
 
 class MultiChatSettingScreen extends Component {
     constructor(props) {
@@ -134,11 +139,17 @@ class MultiChatSettingScreen extends Component {
                             <View style={{ height: DEVICE_HEIGHT / 12, flex: 1, flexDirection: 'column' }}>
                                 {!this.state.show
                                     ?
-                                    <View style={{ flex: 1, justifyContent: 'center' }}>
-                                        <TouchableOpacity
-                                            style={{ flex: 1, justifyContent: 'center' }}
+                                    <View style={{ flex: 1 }}>
+                                        <TouchableOpacity style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}
                                             onPress={() => this.setState({ show: true })}>
-                                            <Text style={{ fontSize: 16, marginLeft: 10 }}>Thay đổi tên nhóm</Text>
+                                            <View style={{ flex: 7, justifyContent: 'center' }}>
+                                                <Text style={{ fontSize: 16, marginLeft: 20 }}>Thay đổi tên nhóm</Text>
+                                            </View>
+                                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                                <Image
+                                                    style={{ width: 20, height: 20 }}
+                                                    source={change_groupname_icon} />
+                                            </View>
                                         </TouchableOpacity>
                                     </View>
                                     :
@@ -157,7 +168,7 @@ class MultiChatSettingScreen extends Component {
                                         />
                                         <TouchableOpacity
                                             onPress={() => this.changeGroupname()}
-                                            style={{ marginLeft: 10 }}>
+                                            style={{ marginLeft: 20 }}>
                                             <Image
                                                 style={{ height: 20, width: 20, tintColor: '#428AF8' }}
                                                 source={done} />
@@ -170,12 +181,12 @@ class MultiChatSettingScreen extends Component {
                             <TouchableOpacity
                                 style={{ height: DEVICE_HEIGHT / 12, flex: 1, flexDirection: 'row' }}>
                                 <View style={{ flex: 7, justifyContent: 'center' }}>
-                                    <Text style={{ fontSize: 16, marginLeft: 10 }}>Thay đổi hình nền</Text>
+                                    <Text style={{ fontSize: 16, marginLeft: 20 }}>Thay đổi hình nền</Text>
                                 </View>
                                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                                     <Image
                                         style={{ width: 20, height: 20 }}
-                                        source={goback} />
+                                        source={change_background_group_icon} />
                                 </View>
                             </TouchableOpacity>
 
@@ -183,26 +194,26 @@ class MultiChatSettingScreen extends Component {
                                 style={{ height: DEVICE_HEIGHT / 12, flex: 1, flexDirection: 'row' }}
                                 onPress={() => this.gotoAddFriendScreen(navigation)}>
                                 <View style={{ flex: 7, justifyContent: 'center' }}>
-                                    <Text style={{ fontSize: 16, marginLeft: 10 }}>Thêm bạn bè vào nhóm</Text>
+                                    <Text style={{ fontSize: 16, marginLeft: 20 }}>Thêm bạn bè vào nhóm</Text>
                                 </View>
                                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                                     <Image
                                         style={{ width: 20, height: 20 }}
-                                        source={goback} />
+                                        source={add_friend_group_exist} />
                                 </View>
                             </TouchableOpacity>
 
-                            <TouchableOpacity
+                            {/* <TouchableOpacity
                                 style={{ height: DEVICE_HEIGHT / 12, flex: 1, flexDirection: 'row' }}>
                                 <View style={{ flex: 7, justifyContent: 'center' }}>
-                                    <Text style={{ fontSize: 16, marginLeft: 10 }}>Tìm kiếm trong cuộc trò chuyện</Text>
+                                    <Text style={{ fontSize: 16, marginLeft: 20 }}>Tìm kiếm trong cuộc trò chuyện</Text>
                                 </View>
                                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                                     <Image
                                         style={{ width: 20, height: 20 }}
                                         source={goback} />
                                 </View>
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
 
                         </View>
                     </ScrollView>

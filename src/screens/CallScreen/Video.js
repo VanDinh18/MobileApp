@@ -21,7 +21,7 @@ class Video extends Component {
     this.state = {
       peerIds: [],                                                  //Array for storing connected peers
       uid: Math.floor(Math.random() * 100),                           //Generate a UID for local user
-      appid: props.navigation.state.params.AppID,                    //Enter the App ID generated from the Agora Website
+      appid: "0fedc73812c342aead62b3e673222b01",                    //Enter the App ID generated from the Agora Website
       channelName: props.navigation.state.params.ChannelName,        //Channel Name for the current session
       vidMute: false,                             //State variable for Video Mute
       audMute: false,                             //State variable for Audio Mute
