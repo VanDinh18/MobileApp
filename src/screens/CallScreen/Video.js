@@ -5,6 +5,8 @@ import React, { Component } from 'react';
 import { View, StyleSheet, NativeModules, ScrollView, Text, Dimensions, TouchableOpacity } from 'react-native';
 import { RtcEngine, AgoraView } from 'react-native-agora';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import firebase from '@react-native-firebase/app';
+import { Value } from 'react-native-reanimated';
 
 const { Agora } = NativeModules;                  //Define Agora object as a native module
 
@@ -23,7 +25,7 @@ class Video extends Component {
       uid: Math.floor(Math.random() * 100),                           //Generate a UID for local user
       appid: "0fedc73812c342aead62b3e673222b01",                    //Enter the App ID generated from the Agora Website
       channelName: props.navigation.state.params.ChannelName,        //Channel Name for the current session
-      avatar: props.navigation.state.params.avatar,
+      avatar: '',
       vidMute: false,                             //State variable for Video Mute
       audMute: false,                             //State variable for Audio Mute
       joinSucceed: false,                         //State variable for storing success
@@ -44,6 +46,13 @@ class Video extends Component {
     RtcEngine.init(config);                     //Initialize the RTC engine
   }
   componentDidMount() {
+    var channelName = this.state.channelName;
+    const Root = firebase.database().ref('users');
+    Root.child(channelName).on('value', value => {
+      this.setState({
+        avatar: value.val().avatar,
+      })
+    })
     RtcEngine.on('userJoined', (data) => {
       const { peerIds } = this.state;             //Get currrent peer IDs
       if (peerIds.indexOf(data.uid) === -1) {     //If new user has joined

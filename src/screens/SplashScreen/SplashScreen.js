@@ -18,6 +18,17 @@ import io from 'socket.io-client';
 class SplashScreen extends Component {
     constructor(props) {
         super(props);
+        this.socket = io("https://fierce-bayou-19142.herokuapp.com/", { jsonp: false });
+        this.socket.on("server-send", function (data) {
+            if (data.receiver === User.username) {
+                props.navigation.navigate(
+                    'AwaitScreen',
+                    {
+                        data: data,
+                    }
+                )
+            }
+        })
     }
     _isMounted = false;
     performTimeConsumingTask = async () => {

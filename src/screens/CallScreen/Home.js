@@ -22,24 +22,24 @@ class Home extends Component {
         this.socket = io("https://fierce-bayou-19142.herokuapp.com/", { jsonp: false });
         this.socket.on("server-send", function (data) {
             if (data === User.username) {
-                Alert.alert(
-                    'Tiêu đề cảnh báo',
-                    'Thông báo cảnh báo ở đây ...',
-                    [
-                        { text: 'Hỏi tôi sau', onPress: () => console.warn('Hỏi tôi sau đó nhấn') },
-                        { text: 'NO', onPress: () => console.warn('NO Đã nhấn'), kiểu: 'hủy' },
-                        {
-                            text: 'CÓ', onPress: () => {
-                                props.navigation.navigate(
-                                    'Video',
-                                    {
-                                        ChannelName: data,
-                                    }
-                                );
-                            }
-                        },
-                    ]
-                );
+                // Alert.alert(
+                //     'Tiêu đề cảnh báo',
+                //     'Thông báo cảnh báo ở đây ...',
+                //     [
+                //         { text: 'Hỏi tôi sau', onPress: () => console.warn('Hỏi tôi sau đó nhấn') },
+                //         { text: 'NO', onPress: () => console.warn('NO Đã nhấn'), kiểu: 'hủy' },
+                //         {
+                //             text: 'CÓ', onPress: () => {
+                //                 props.navigation.navigate(
+                //                     'Video',
+                //                     {
+                //                         ChannelName: data,
+                //                     }
+                //                 );
+                //             }
+                //         },
+                //     ]
+                // );
             }
         })
     }

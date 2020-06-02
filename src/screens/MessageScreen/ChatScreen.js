@@ -40,17 +40,6 @@ export default class ChatScreen extends Component {
             },
         }
         this.socket = io("https://fierce-bayou-19142.herokuapp.com/", { jsonp: false });
-        this.socket.on("server-send", function (data) {
-            if (data === User.username) {
-                props.navigation.navigate(
-                    'AwaitScreen',
-                    {
-                        name: data,
-                        avatar: props.navigation.state.params.avatar,
-                    }
-                )
-            }
-        })
         this.sendMessage = this.sendMessage.bind(this);
         this.goback = this.goback.bind(this);
         this.gotoChatSettingScreen = this.gotoChatSettingScreen.bind(this);
@@ -61,12 +50,16 @@ export default class ChatScreen extends Component {
     }
     gotoVideoCallScreen = (navigation) => {
         var ChannelName = this.state.person.name;
-        this.socket.emit("client-send", ChannelName);
+        var data = {
+            receiver: ChannelName,
+            sender: User.username,
+        }
+
+        this.socket.emit("client-send", data);
         navigation.navigate(
             'Video',
             {
                 ChannelName: this.state.person.name,
-                avatar: this.state.person.avatar,
             }
         );
     }

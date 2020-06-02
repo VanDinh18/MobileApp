@@ -8,6 +8,8 @@ import {
     Dimensions,
     ImageBackground,
 } from 'react-native';
+import firebase from '@react-native-firebase/app';
+
 import phone_accept from '../../assets/images/phone_accept.png';
 import phone_cancle from '../../assets/images/phone_cancle.png';
 import wallpaper from '../../assets/images/wallpaper.png';
@@ -16,18 +18,18 @@ class AwaitScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            person: {
-                name: props.navigation.state.params.name,
-                avatar: props.navigation.state.params.avatar,
-            },
+            receiver: props.navigation.state.params.data.receiver,
+            sender: props.navigation.state.params.data.sender,
+            avatarReceiver: '',
+            avatarSender: '',
         }
     }
     cancle = () => {
         this.props.navigation.navigate(
             'ChatScreen',
             {
-                name: this.state.person.name,
-                avatar: this.state.person.avatar,
+                name: this.state.sender,
+                avatar: this.state.avatarSender,
             }
         )
     }
@@ -35,10 +37,24 @@ class AwaitScreen extends Component {
         this.props.navigation.navigate(
             'Video',
             {
-                ChannelName: this.state.person.name,
-                avatar: this.state.person.avatar,
+                ChannelName: this.state.receiver,
             }
         )
+    }
+    componentDidMount = async () => {
+        var receiver = this.state.receiver;
+        var sender = this.state.sender;
+        const Root = firebase.database().ref('users');
+        Root.child(receiver).on('value', value => {
+            this.setState({
+                avatarReceiver: value.val().avatar,
+            })
+        });
+        Root.child(sender).on('value', value => {
+            this.setState({
+                avatarSender: value.val().avatar,
+            })
+        })
     }
     render() {
         return (
@@ -49,10 +65,10 @@ class AwaitScreen extends Component {
                     <View style={styles.img}>
                         <Image
                             style={{ height: DEVICE_WIDTH / 4, width: DEVICE_WIDTH / 4, borderRadius: DEVICE_WIDTH / 8 }}
-                            source={this.state.person.avatar ? { uri: this.state.person.avatar } : null} />
+                            source={this.state.avatarSender ? { uri: this.state.avatarSender } : null} />
                     </View>
                     <View style={styles.username}>
-                        <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#e6e6e6' }}>{this.state.person.name}</Text>
+                        <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#e6e6e6' }}>{this.state.sender}</Text>
                     </View>
                     <View style={styles.text}>
                         <Text style={{ fontSize: 18, color: '#e6e6e6' }}>Đang đổ chuông...</Text>
