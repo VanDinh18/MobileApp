@@ -9,9 +9,12 @@ import {
     StyleSheet,
     ScrollView,
     TextInput,
+    Alert,
 } from 'react-native';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/database';
+import ImagePicker from 'react-native-image-picker';
+import { imagePickerOptions, uploadFileToFireBase } from '../../utils';
 
 import done from '../../assets/images/done.png';
 import goback from '../../assets/images/goback.png';
@@ -89,7 +92,49 @@ class MultiChatSettingScreen extends Component {
             })
         }
     }
+    monitorFileUpload = (uploadTask, navigation) => {
+        var chatkey = this.state.group.chatkey;
+        var members = this.state.group.members;
+        uploadTask.on('state_changed', function (snapshot) {
+            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log('Upload is ' + progress + '% done');
+            switch (snapshot.state) {
+                case firebase.storage.TaskState.PAUSED:
+                    console.log('Upload is paused');
+                    break;
+                case firebase.storage.TaskState.RUNNING:
+                    console.log('Upload is running');
+                    break;
+            }
+        }, function (error) {
 
+        }, function () {
+            uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
+                console.log(downloadURL);
+                const Root = firebase.database().ref('groups');
+                for (var i = 0; i < members.length; i++) {
+                    Root.child(members[i]).child(chatkey).update({
+                        groupavatar: downloadURL,
+                    })
+                }
+                navigation.navigate('GroupScreen');
+            });
+        });
+
+    };
+    uploadFile = (navigation) => {
+        ImagePicker.launchImageLibrary(imagePickerOptions, response => {
+            if (response.didCancel) {
+                Alert.alert('Hủy đăng ảnh');
+            } else if (response.error) {
+                Alert.alert('Đã xảy ra lỗi: ', response.error);
+            } else {
+                const uploadTask = uploadFileToFireBase(response);
+                this.monitorFileUpload(uploadTask, navigation);
+            }
+        }
+        );
+    }
     render() {
         const { navigation } = this.props;
         return (
@@ -129,10 +174,13 @@ class MultiChatSettingScreen extends Component {
                 <View style={styles.body}>
                     <ScrollView>
                         <View style={styles.avatar}>
-                            <Image
-                                style={{ height: 100, width: 100, borderRadius: 50, marginBottom: 10 }}
-                                source={this.state.group.groupavatar ? { uri: this.state.group.groupavatar } : null}
-                            />
+                            <TouchableOpacity
+                                onPress={() => this.uploadFile(navigation)}>
+                                <Image
+                                    style={{ height: DEVICE_WIDTH / 4, width: DEVICE_WIDTH / 4, borderRadius: DEVICE_WIDTH / 8, marginBottom: 10 }}
+                                    source={this.state.group.groupavatar ? { uri: this.state.group.groupavatar } : null}
+                                />
+                            </TouchableOpacity>
                             <Text style={{ fontSize: 24, fontWeight: 'bold' }}>{this.state.group.groupname}</Text>
                         </View>
                         <View style={styles.option}>
@@ -179,18 +227,6 @@ class MultiChatSettingScreen extends Component {
                             </View>
 
                             <TouchableOpacity
-                                style={{ height: DEVICE_HEIGHT / 12, flex: 1, flexDirection: 'row' }}>
-                                <View style={{ flex: 7, justifyContent: 'center' }}>
-                                    <Text style={{ fontSize: 16, marginLeft: 20 }}>Thay đổi hình nền</Text>
-                                </View>
-                                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Image
-                                        style={{ width: 20, height: 20 }}
-                                        source={change_background_group_icon} />
-                                </View>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
                                 style={{ height: DEVICE_HEIGHT / 12, flex: 1, flexDirection: 'row' }}
                                 onPress={() => this.gotoAddFriendScreen(navigation)}>
                                 <View style={{ flex: 7, justifyContent: 'center' }}>
@@ -203,18 +239,17 @@ class MultiChatSettingScreen extends Component {
                                 </View>
                             </TouchableOpacity>
 
-                            {/* <TouchableOpacity
+                            <TouchableOpacity
                                 style={{ height: DEVICE_HEIGHT / 12, flex: 1, flexDirection: 'row' }}>
                                 <View style={{ flex: 7, justifyContent: 'center' }}>
-                                    <Text style={{ fontSize: 16, marginLeft: 20 }}>Tìm kiếm trong cuộc trò chuyện</Text>
+                                    <Text style={{ fontSize: 16, marginLeft: 20 }}>Thay đổi hình nền</Text>
                                 </View>
                                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                                     <Image
                                         style={{ width: 20, height: 20 }}
-                                        source={goback} />
+                                        source={change_background_group_icon} />
                                 </View>
-                            </TouchableOpacity> */}
-
+                            </TouchableOpacity>
                         </View>
                     </ScrollView>
                 </View>
