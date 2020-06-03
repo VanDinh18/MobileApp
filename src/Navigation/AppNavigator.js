@@ -10,7 +10,6 @@ import TabNavigator from './TabNavigator';
 import MultiChatScreen from '../screens/GroupScreen/MultiChatScreen';
 import MultiChatSettingScreen from '../screens/GroupScreen/MultiChatSettingScreen';
 import AddFriendToGroupExistScreen from '../screens/GroupScreen/AddFriendToGroupExistScreen';
-import Home from '../screens/CallScreen/Home';
 import Video from '../screens/CallScreen/Video';
 import AwaitScreen from '../screens/CallScreen/AwaitScreen';
 
@@ -29,7 +28,6 @@ const AppNavigator = createSwitchNavigator(
         MultiChatSettingScreen: { screen: MultiChatSettingScreen },
         AddFriendToGroupExistScreen: { screen: AddFriendToGroupExistScreen },
 
-        Home: { screen: Home },
         Video: { screen: Video },
         AwaitScreen: { screen: AwaitScreen },
     },
