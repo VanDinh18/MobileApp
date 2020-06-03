@@ -6,7 +6,7 @@ import { View, StyleSheet, NativeModules, ScrollView, Text, Dimensions, Touchabl
 import { RtcEngine, AgoraView } from 'react-native-agora';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import firebase from '@react-native-firebase/app';
-import { Value } from 'react-native-reanimated';
+import io from 'socket.io-client';
 
 const { Agora } = NativeModules;                  //Define Agora object as a native module
 
@@ -25,6 +25,7 @@ class Video extends Component {
       uid: Math.floor(Math.random() * 100),                           //Generate a UID for local user
       appid: "0fedc73812c342aead62b3e673222b01",                    //Enter the App ID generated from the Agora Website
       channelName: props.navigation.state.params.ChannelName,        //Channel Name for the current session
+      navigation: props.navigation,
       avatar: '',
       vidMute: false,                             //State variable for Video Mute
       audMute: false,                             //State variable for Audio Mute
@@ -44,15 +45,31 @@ class Video extends Component {
       audioScenario: AudioScenarioDefault,
     };
     RtcEngine.init(config);                     //Initialize the RTC engine
+    this.socket = io("https://fierce-bayou-19142.herokuapp.com/", { jsonp: false });
+
   }
-  componentDidMount() {
+  componentDidMount = async () => {
     var channelName = this.state.channelName;
+    var navigation = this.state.navigation;
+    var avatar = '';
     const Root = firebase.database().ref('users');
-    Root.child(channelName).on('value', value => {
-      this.setState({
-        avatar: value.val().avatar,
-      })
+    await Root.child(channelName).once('value', value => {
+      avatar = value.val().avatar;
     })
+    this.setState({ avatar: avatar });
+    //
+    this.socket.on("server-send-end", function (data) {
+      console.log(data);
+      RtcEngine.destroy();
+      navigation.navigate(
+        'ChatScreen',
+        {
+          name: channelName,
+          avatar: avatar,
+        }
+      );
+    })
+    //
     RtcEngine.on('userJoined', (data) => {
       const { peerIds } = this.state;             //Get currrent peer IDs
       if (peerIds.indexOf(data.uid) === -1) {     //If new user has joined
@@ -112,6 +129,8 @@ class Video extends Component {
         avatar: this.state.avatar,
       }
     );
+    var data = 'abc';
+    this.socket.emit("client-send-end", data);
   }
   /**
   * @name peerClick

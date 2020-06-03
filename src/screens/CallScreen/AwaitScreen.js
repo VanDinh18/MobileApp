@@ -9,6 +9,7 @@ import {
     ImageBackground,
 } from 'react-native';
 import firebase from '@react-native-firebase/app';
+import io from 'socket.io-client';
 
 import phone_accept from '../../assets/images/phone_accept.png';
 import phone_cancle from '../../assets/images/phone_cancle.png';
@@ -22,9 +23,13 @@ class AwaitScreen extends Component {
             sender: props.navigation.state.params.data.sender,
             avatarReceiver: '',
             avatarSender: '',
-        }
+            time: 0,
+        };
+        this.socket = io("https://fierce-bayou-19142.herokuapp.com/", { jsonp: false });
     }
     cancle = () => {
+        var data = 'abc';
+        this.socket.emit("client-send-end", data);
         this.props.navigation.navigate(
             'ChatScreen',
             {
@@ -54,7 +59,16 @@ class AwaitScreen extends Component {
             this.setState({
                 avatarSender: value.val().avatar,
             })
-        })
+        });
+        this.interval = setInterval(() => {
+            if (this.state.time == 10) {
+                this.cancle()
+            }
+            this.setState({ time: this.state.time + 1 });
+        }, 1000);
+    }
+    componentWillUnmount() {
+        clearInterval(this.interval);
     }
     render() {
         return (
@@ -72,6 +86,9 @@ class AwaitScreen extends Component {
                     </View>
                     <View style={styles.text}>
                         <Text style={{ fontSize: 18, color: '#e6e6e6' }}>Đang đổ chuông...</Text>
+                    </View>
+                    <View style={styles.time}>
+                        <Text style={{ fontSize: 16, color: '#e6e6e6' }}>0:{this.state.time}</Text>
                     </View>
                     <View style={styles.button}>
                         <View style={{ flex: 1 }}>
@@ -123,6 +140,9 @@ const styles = StyleSheet.create({
     },
     text: {
         marginTop: DEVICE_HEIGHT / 30,
+    },
+    time: {
+        marginTop: DEVICE_HEIGHT / 120,
     },
     button: {
         marginTop: DEVICE_HEIGHT / 3,
