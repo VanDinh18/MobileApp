@@ -125,6 +125,7 @@ class MessageScreen extends Component {
     }
     componentWillUnmount() {
         this._isMounted = false;
+        firebase.database().ref('messages').child(User.username).off('value');
     }
     render() {
         return (

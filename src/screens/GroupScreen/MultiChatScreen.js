@@ -149,6 +149,7 @@ class MultiChatScreen extends Component {
     //fix bug
     componentWillUnmount() {
         this._isMounted = false;
+        firebase.database().ref('groups').child(User.username).child(this.state.group.chatkey).child('content').off('child_added');
     }
     render() {
         const { navigation } = this.props;

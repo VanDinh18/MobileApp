@@ -150,6 +150,7 @@ export default class ChatScreen extends Component {
     }
     componentWillUnmount() {
         this._isMounted = false;
+        firebase.database().ref('messages').child(User.username).child(this.state.person.name).off('child_added');
     }
     render() {
         const { navigation } = this.props;

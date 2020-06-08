@@ -68,7 +68,11 @@ class AwaitScreen extends Component {
         }, 1000);
     }
     componentWillUnmount() {
+        var receiver = this.state.receiver;
+        var sender = this.state.sender;
         clearInterval(this.interval);
+        firebase.database().ref('users').child(receiver).off('value');
+        firebase.database().ref('users').child(sender).off('value');
     }
     render() {
         return (

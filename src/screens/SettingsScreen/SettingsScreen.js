@@ -148,6 +148,8 @@ class SettingsScreen extends Component {
     }
     componentWillUnmount() {
         this._isMounted = false;
+        firebase.database().ref('users').off('value');
+        firebase.database().ref('users').child(User.username).off('value');
     }
     render() {
         return (

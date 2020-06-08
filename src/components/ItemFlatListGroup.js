@@ -7,6 +7,7 @@ import {
     StyleSheet,
     Image,
 } from 'react-native';
+import User from '../components/User';
 
 class ItemFlatListGroup extends Component {
     constructor(props) {
@@ -33,12 +34,21 @@ class ItemFlatListGroup extends Component {
         if (typeof content !== 'undefined') {
             var a = Object.values(content);
             var n = a.length;
-            if (a[n - 1].checkimage == 1) {
+            if (a[n - 1].checkimage == 1 && User.username != a[n - 1].from) {
                 return (
                     <Text
                         style={{ flex: 1, textAlignVertical: 'top', fontSize: 14, fontWeight: '100', color: '#b3b3b3' }}
                         numberOfLines={1}>
                         {a[n - 1].from} đã gửi 1 ảnh đến nhóm
+                    </Text>
+                )
+            }
+            else if (a[n - 1].checkimage == 1 && User.username == a[n - 1].from) {
+                return (
+                    <Text
+                        style={{ flex: 1, textAlignVertical: 'top', fontSize: 14, fontWeight: '100', color: '#b3b3b3' }}
+                        numberOfLines={1}>
+                        Bạn đã gửi 1 ảnh đến nhóm
                     </Text>
                 )
             }

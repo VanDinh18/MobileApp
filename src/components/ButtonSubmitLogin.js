@@ -104,6 +104,7 @@ export default class ButtonSubmitLogin extends Component {
         if (this.unsubcriber) {
             this.unsubcriber();
         }
+        firebase.database().ref('/users').off('value');
     }
 
     render() {
