@@ -13,12 +13,13 @@ import AddFriendToGroupExistScreen from '../screens/GroupScreen/AddFriendToGroup
 import Video from '../screens/CallScreen/Video';
 import AwaitScreen from '../screens/CallScreen/AwaitScreen';
 
+import ForgotPasswordScreen from '../screens/FogotPasswordScreen/ForgotPasswordScreen';
 const AppNavigator = createSwitchNavigator(
     {
         SplashScreen: { screen: SplashScreen },
         LoginScreen: { screen: LoginScreen },
         RegisterScreen: { screen: RegisterScreen },
-
+        ForgotPasswordScreen: {screen: ForgotPasswordScreen},
         Main: TabNavigator,
 
         ChatScreen: { screen: ChatScreen },
