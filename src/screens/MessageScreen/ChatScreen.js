@@ -26,6 +26,7 @@ import upload from '../../assets/images/upload.png';
 import goback from '../../assets/images/goback.png';
 import smallcircle from '../../assets/images/smallcircle.png';
 import video_call from '../../assets/images/video_call.png';
+import requestCameraAndAudioPermission from '../CallScreen/permission';
 
 export default class ChatScreen extends Component {
     _isMounted = false;
@@ -38,6 +39,11 @@ export default class ChatScreen extends Component {
                 name: props.navigation.state.params.name,
                 avatar: props.navigation.state.params.avatar,
             },
+        };
+        if (Platform.OS === 'android') {                    //Request required permissions from Android
+            requestCameraAndAudioPermission().then(_ => {
+                console.log('requested!');
+            });
         }
         this.socket = io("https://fierce-bayou-19142.herokuapp.com/", { jsonp: false });
         this.sendMessage = this.sendMessage.bind(this);
