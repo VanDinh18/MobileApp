@@ -24,6 +24,7 @@ class ChatSettingScreen extends Component {
                 name: props.navigation.state.params.name,
                 avatar: props.navigation.state.params.avatar,
             },
+            email: ''
         }
         this.goback = this.goback.bind(this);
     }
@@ -32,8 +33,14 @@ class ChatSettingScreen extends Component {
         navigation.navigate('ChatScreen', { name: this.state.person.name, avatar: this.state.person.avatar });
     }
 
-    componentDidMount() {
-
+    componentDidMount = async () => {
+        var username = this.state.person.name;
+        const Root = firebase.database().ref('users');
+        Root.child(username).on('value', value => {
+            this.setState({
+                email: value.val().email,
+            })
+        })
     }
     render() {
         const { navigation } = this.props;
@@ -47,12 +54,10 @@ class ChatSettingScreen extends Component {
                             justifyContent: 'center',
                             flexDirection: 'row',
                             alignItems: 'center',
-                        }}
-                    >
+                        }}>
                         <Image
                             style={{ height: 20, width: 20, tintColor: 'white' }}
-                            source={goback}
-                        />
+                            source={goback} />
                     </TouchableOpacity>
                     <View
                         style={{
@@ -60,19 +65,16 @@ class ChatSettingScreen extends Component {
                             flexDirection: 'row',
                             alignItems: 'center',
 
-                        }}
-                    >
+                        }}>
                         <Text style={{ fontSize: 20, color: 'white' }}>Tùy chọn</Text>
                     </View>
                     <View
                         style={{
                             flex: 1, justifyContent: 'center', alignItems: 'center'
-                        }}
-                    >
+                        }}>
                         <Image
                             style={{ height: 30, width: 30, tintColor: 'white' }}
-                            source={chatsetting}
-                        />
+                            source={chatsetting} />
                     </View>
                 </View>
 
@@ -80,32 +82,14 @@ class ChatSettingScreen extends Component {
                     <ScrollView>
                         <View style={styles.avatar}>
                             <Image
-                                style={{ height: 100, width: 100, borderRadius: 50, marginBottom: 10 }}
+                                style={{ height: DEVICE_WIDTH / 4, width: DEVICE_WIDTH / 4, borderRadius: DEVICE_WIDTH / 8, marginTop: DEVICE_HEIGHT / 10 }}
                                 source={this.state.person.avatar ? { uri: this.state.person.avatar } : null}
                             />
-                            <Text style={{ fontSize: 24, fontWeight: 'bold' }}>{this.state.person.name}</Text>
+                            <Text style={{ fontSize: 24, fontWeight: 'bold', marginTop: DEVICE_HEIGHT / 30 }}>{this.state.person.name}</Text>
+                            <Text style={{ fontSize: 24, fontWeight: 'bold', marginTop: DEVICE_HEIGHT / 50 }}>{this.state.email}</Text>
                         </View>
                         <View style={styles.option}>
-                            <TouchableOpacity
-                                style={{ height: DEVICE_HEIGHT / 12 }}
-                            >
-                                <Text>Thay đổi hình nền</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={{ height: DEVICE_HEIGHT / 12 }}
-                            >
-                                <Text>Tìm kiếm trong cuộc trò chuyện</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={{ height: DEVICE_HEIGHT / 12 }}
-                            >
-                                <Text>abc</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={{ height: DEVICE_HEIGHT / 12 }}
-                            >
-                                <Text>abc</Text>
-                            </TouchableOpacity>
+
                         </View>
                     </ScrollView>
                 </View>
@@ -131,8 +115,6 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
     },
     avatar: {
-        height: DEVICE_HEIGHT / 4,
-        justifyContent: 'center',
         alignItems: 'center',
     },
     option: {
