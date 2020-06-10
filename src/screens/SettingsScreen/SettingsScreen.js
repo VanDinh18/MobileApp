@@ -69,6 +69,7 @@ class SettingsScreen extends Component {
         });
 
     };
+
     uploadFile = (target) => {
         ImagePicker.launchImageLibrary(imagePickerOptions, response => {
             if (response.didCancel) {
@@ -96,23 +97,7 @@ class SettingsScreen extends Component {
         }
         return true;
     }
-    changeUsername = () => {
-        var username = this.state.username.trim();
-        if (username.length > 6 && username.length < 32) {
-            if (this.checkUserExist() == true) {
-                this.setState({
-                    show: false,
-                    username: '',
-                });
-            }
-            else {
-                Alert.alert('Tên người dùng đã tồn tại');
-            }
-        }
-        else {
-            Alert.alert('Tên người dùng từ 6 đến 32 ký tự');
-        }
-    }
+
     handleText = key => val => {
         this.setState({ [key]: val })
     }
@@ -138,6 +123,12 @@ class SettingsScreen extends Component {
                 alluser: data,
             })
         })
+    }
+    changePassword = () => {
+        this.props.navigation.navigate('ChangePassword');
+    }
+    appInfor = () => {
+
     }
     componentDidMount = async () => {
         this._isMounted = true;
@@ -175,52 +166,9 @@ class SettingsScreen extends Component {
                     </View>
                 </View>
                 <View style={styles.body}>
-                    <View style={{ height: DEVICE_HEIGHT / 12 }}>
-                        {!this.state.show
-                            ?
-                            <View style={{ flex: 1 }}>
-                                <TouchableOpacity
-                                    style={{ flex: 1, flexDirection: 'row' }}
-                                    onPress={() => this.setState({ show: true })}>
-                                    <View style={{ flex: 7, marginLeft: 20, justifyContent: 'center', borderBottomColor: '#b3b3b3', borderBottomWidth: 1 }}>
-                                        <Text style={{ fontSize: 16 }}>Thay đổi tên người dùng</Text>
-                                    </View>
-                                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                        <Image
-                                            style={{ height: 20, width: 20, tintColor: '#b3b3b3' }}
-                                            source={user_switch} />
-                                    </View>
-                                </TouchableOpacity>
-                            </View>
-                            :
-                            null
-                        }
-                        {this.state.show
-                            ?
-                            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', marginLeft: 20 }}>
-                                <TextInput
-                                    style={{ width: DEVICE_WIDTH / 2 }}
-                                    underlineColorAndroid='#428AF8'
-                                    selectionColor='#428AF8'
-                                    placeholder={this.state.user.username}
-                                    onChangeText={this.handleText('username')}
-                                    value={this.state.username}
-                                />
-                                <TouchableOpacity
-                                    onPress={() => this.changeUsername()}
-                                    style={{ marginLeft: 10 }}>
-                                    <Image
-                                        style={{ height: 20, width: 20, tintColor: '#428AF8' }}
-                                        source={done} />
-                                </TouchableOpacity>
-                            </View>
-                            : null
-                        }
-
-                    </View>
                     <TouchableOpacity
                         style={{ height: DEVICE_HEIGHT / 12, flexDirection: 'column', justifyContent: 'center' }}
-                        onPress={() => this.changeUsername()}>
+                        onPress={() => this.appInfor()}>
                         <View style={{ flexDirection: 'row', flex: 1 }}>
                             <View style={{ flex: 7, justifyContent: 'center', marginLeft: 20, borderBottomColor: '#b3b3b3', borderBottomWidth: 1 }}>
                                 <Text style={{ fontSize: 16 }}>Thông tin ứng dụng</Text>
@@ -229,6 +177,20 @@ class SettingsScreen extends Component {
                                 <Image
                                     style={{ height: 20, width: 20, tintColor: '#b3b3b3' }}
                                     source={info} />
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={{ height: DEVICE_HEIGHT / 12, flexDirection: 'column', justifyContent: 'center' }}
+                        onPress={() => this.changePassword()}>
+                        <View style={{ flexDirection: 'row', flex: 1 }}>
+                            <View style={{ flex: 7, justifyContent: 'center', marginLeft: 20, borderBottomColor: '#b3b3b3', borderBottomWidth: 1 }}>
+                                <Text style={{ fontSize: 16 }}>Thay đổi mật khẩu</Text>
+                            </View>
+                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                <Image
+                                    style={{ height: 20, width: 20, tintColor: '#b3b3b3' }}
+                                    source={user_switch} />
                             </View>
                         </View>
                     </TouchableOpacity>

@@ -17,12 +17,12 @@ export default class ButtonSubmitCancle extends Component {
     }
 
     render() {
-        const { TextButton, navigation } = this.props;
+        const { TextButton, navigation, screen } = this.props;
         return (
             <View style={styles.container}>
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={() => navigation.navigate("LoginScreen")}>
+                    onPress={() => navigation.navigate(screen)}>
                     <Text style={styles.text}>{TextButton}</Text>
                 </TouchableOpacity>
             </View>

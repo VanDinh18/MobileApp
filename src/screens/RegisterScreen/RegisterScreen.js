@@ -55,6 +55,7 @@ class RegisterScreen extends Component {
           <ButtonSubmitCancle
             TextButton="CANCLE"
             navigation={this.props.navigation}
+            screen="LoginScreen"
           />
         </View>
       </Wallpaper>

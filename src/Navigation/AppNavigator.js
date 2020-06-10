@@ -14,12 +14,14 @@ import Video from '../screens/CallScreen/Video';
 import AwaitScreen from '../screens/CallScreen/AwaitScreen';
 
 import ForgotPasswordScreen from '../screens/FogotPasswordScreen/ForgotPasswordScreen';
+import ChangePassword from '../screens/SettingsScreen/ChangePassword';
+
 const AppNavigator = createSwitchNavigator(
     {
         SplashScreen: { screen: SplashScreen },
         LoginScreen: { screen: LoginScreen },
         RegisterScreen: { screen: RegisterScreen },
-        ForgotPasswordScreen: {screen: ForgotPasswordScreen},
+        ForgotPasswordScreen: { screen: ForgotPasswordScreen },
         Main: TabNavigator,
 
         ChatScreen: { screen: ChatScreen },
@@ -28,6 +30,7 @@ const AppNavigator = createSwitchNavigator(
         MultiChatScreen: { screen: MultiChatScreen },
         MultiChatSettingScreen: { screen: MultiChatSettingScreen },
         AddFriendToGroupExistScreen: { screen: AddFriendToGroupExistScreen },
+        ChangePassword: { screen: ChangePassword },
 
         Video: { screen: Video },
         AwaitScreen: { screen: AwaitScreen },
