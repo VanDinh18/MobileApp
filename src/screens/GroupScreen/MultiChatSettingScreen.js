@@ -10,6 +10,7 @@ import {
     ScrollView,
     TextInput,
     Alert,
+    FlatList,
 } from 'react-native';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/database';
@@ -23,7 +24,6 @@ import change_groupname_icon from '../../assets/images/change_groupname_icon.png
 import change_background_group_icon from '../../assets/images/change_background_group_icon.png';
 import add_friend_group_exist from '../../assets/images/add_friend_group_exist.png';
 
-
 class MultiChatSettingScreen extends Component {
     constructor(props) {
         super(props);
@@ -35,7 +35,9 @@ class MultiChatSettingScreen extends Component {
                 groupavatar: props.navigation.state.params.groupavatar,
                 content: props.navigation.state.params.content,
             },
+            data: null,
             show: false,
+            show2: false,
             groupname: '',
         };
         this.goback = this.goback.bind(this);
@@ -135,6 +137,31 @@ class MultiChatSettingScreen extends Component {
         }
         );
     }
+
+
+    renderMembers = () => {
+    }
+    componentDidMount() {
+        const Root = firebase.database().ref('users');
+        var members = this.state.group.members;
+        var i = 0;
+        var data = [];
+        members.forEach(item => {
+            Root.child(item).once("value", value => {
+                let e = {
+                    id: i,
+                    username: value.val().username,
+                    coverimage: value.val().coverimage,
+                    avatar: value.val().avatar,
+                };
+                i++;
+                data.push(e);
+            })
+        });
+        this.setState({
+            data: data,
+        });
+    }
     render() {
         const { navigation } = this.props;
         return (
@@ -183,7 +210,42 @@ class MultiChatSettingScreen extends Component {
                             </TouchableOpacity>
                             <Text style={{ fontSize: 24, fontWeight: 'bold' }}>{this.state.group.groupname}</Text>
                         </View>
+                        {/* OPTION */}
                         <View style={styles.option}>
+                            <View style={{ height: DEVICE_HEIGHT / 12, flex: 1, flexDirection: 'column' }}>
+                                {!this.state.show2
+                                    ?
+                                    <View style={{ flex: 1 }}>
+                                        <TouchableOpacity style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}
+                                            onPress={() => this.setState({ show2: true })}>
+                                            <View style={{ flex: 7, justifyContent: 'center' }}>
+                                                <Text style={{ fontSize: 16, marginLeft: 20 }}>Xem thành viên ({this.state.group.members.length})</Text>
+                                            </View>
+                                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                                <Image
+                                                    style={{ width: 20, height: 20 }}
+                                                    source={change_background_group_icon} />
+                                            </View>
+                                        </TouchableOpacity>
+                                    </View>
+                                    :
+                                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', marginLeft: 20 }}>
+                                        <FlatList
+                                            data={this.state.data}
+                                            renderItem={({ item }) => (
+                                                <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center', marginRight: 20 }}>
+                                                    <Image
+                                                        style={{ height: DEVICE_WIDTH / 10, width: DEVICE_WIDTH / 10, borderRadius: DEVICE_WIDTH / 20 }}
+                                                        source={item.avatar ? { uri: item.avatar } : null} />
+                                                    <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{item.username}</Text>
+                                                </View>
+                                            )}
+                                            keyExtractor={(item) => item.id.toString()}
+                                            horizontal={true}
+                                        />
+                                    </View>
+                                }
+                            </View>
                             <View style={{ height: DEVICE_HEIGHT / 12, flex: 1, flexDirection: 'column' }}>
                                 {!this.state.show
                                     ?
@@ -236,18 +298,6 @@ class MultiChatSettingScreen extends Component {
                                     <Image
                                         style={{ width: 20, height: 20 }}
                                         source={add_friend_group_exist} />
-                                </View>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                style={{ height: DEVICE_HEIGHT / 12, flex: 1, flexDirection: 'row' }}>
-                                <View style={{ flex: 7, justifyContent: 'center' }}>
-                                    <Text style={{ fontSize: 16, marginLeft: 20 }}>Thay đổi hình nền</Text>
-                                </View>
-                                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Image
-                                        style={{ width: 20, height: 20 }}
-                                        source={change_background_group_icon} />
                                 </View>
                             </TouchableOpacity>
                         </View>
