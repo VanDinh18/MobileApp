@@ -12,6 +12,8 @@ import MultiChatSettingScreen from '../screens/GroupScreen/MultiChatSettingScree
 import AddFriendToGroupExistScreen from '../screens/GroupScreen/AddFriendToGroupExistScreen';
 import Video from '../screens/CallScreen/Video';
 import AwaitScreen from '../screens/CallScreen/AwaitScreen';
+import AwaitVoiceScreen from '../screens/CallScreen/AwaitVoiceScreen';
+import VoiceCall from '../screens/CallScreen/VoiceCall';
 
 import ForgotPasswordScreen from '../screens/FogotPasswordScreen/ForgotPasswordScreen';
 import ChangePassword from '../screens/SettingsScreen/ChangePassword';
@@ -34,6 +36,8 @@ const AppNavigator = createSwitchNavigator(
 
         Video: { screen: Video },
         AwaitScreen: { screen: AwaitScreen },
+        AwaitVoiceScreen: { screen: AwaitVoiceScreen },
+        VoiceCall: { screen: VoiceCall },
     },
     {
         initialRouteName: 'SplashScreen',

@@ -28,7 +28,17 @@ class SplashScreen extends Component {
                     }
                 )
             }
-        })
+        });
+        this.socket.on("server-voice-send", function (data) {
+            if (data.receiver === User.username) {
+                props.navigation.navigate(
+                    'AwaitVoiceScreen',
+                    {
+                        data: data,
+                    }
+                )
+            }
+        });
     }
     _isMounted = false;
     performTimeConsumingTask = async () => {

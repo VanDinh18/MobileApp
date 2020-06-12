@@ -8,7 +8,6 @@ import {
     TouchableOpacity,
     Image,
     FlatList,
-    KeyboardAvoidingView,
     Alert,
 } from 'react-native';
 
@@ -26,7 +25,7 @@ import upload from '../../assets/images/upload.png';
 import goback from '../../assets/images/goback.png';
 import smallcircle from '../../assets/images/smallcircle.png';
 import video_call from '../../assets/images/video_call.png';
-import requestCameraAndAudioPermission from '../CallScreen/permission';
+import voice_call from '../../assets/images/voice_call.png';
 
 export default class ChatScreen extends Component {
     _isMounted = false;
@@ -40,11 +39,6 @@ export default class ChatScreen extends Component {
                 avatar: props.navigation.state.params.avatar,
             },
         };
-        if (Platform.OS === 'android') {                    //Request required permissions from Android
-            requestCameraAndAudioPermission().then(_ => {
-                console.log('requested!');
-            });
-        }
         this.socket = io("https://fierce-bayou-19142.herokuapp.com/", { jsonp: false });
         this.sendMessage = this.sendMessage.bind(this);
         this.goback = this.goback.bind(this);
@@ -69,6 +63,21 @@ export default class ChatScreen extends Component {
             }
         );
     }
+
+    gotoVoiceCallScreen = (navigation) => {
+        var data = {
+            receiver: this.state.person.name,
+            sender: User.username,
+        }
+        this.socket.emit("client-voice-send", data);
+        navigation.navigate(
+            'VoiceCall',
+            {
+                data: data,
+            }
+        );
+    }
+
     gotoChatSettingScreen(navigation) {
         navigation.navigate('ChatSettingScreen', { name: this.state.person.name, avatar: this.state.person.avatar });
     }
@@ -177,7 +186,7 @@ export default class ChatScreen extends Component {
                     </TouchableOpacity>
                     <View
                         style={{
-                            flex: 5,
+                            flex: 4,
                             flexDirection: 'row',
                             alignItems: 'center',
 
@@ -188,7 +197,7 @@ export default class ChatScreen extends Component {
                                 source={this.state.person.avatar ? { uri: this.state.person.avatar } : null}
                             />
                         </View>
-                        <View style={{ flex: 4 }}>
+                        <View style={{ flex: 3 }}>
                             <Text
                                 style={{ fontSize: 18, color: 'white' }}
                                 numberOfLines={1}>
@@ -197,6 +206,14 @@ export default class ChatScreen extends Component {
                         </View>
                     </View>
 
+                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <TouchableOpacity
+                            onPress={() => this.gotoVoiceCallScreen(navigation)}>
+                            <Image
+                                style={{ height: 25, width: 25, tintColor: 'white' }}
+                                source={voice_call} />
+                        </TouchableOpacity>
+                    </View>
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                         <TouchableOpacity
                             onPress={() => this.gotoVideoCallScreen(navigation)}>

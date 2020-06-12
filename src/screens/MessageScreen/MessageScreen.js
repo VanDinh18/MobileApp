@@ -15,6 +15,7 @@ import firebase from '@react-native-firebase/app';
 import User from '../../components/User';
 import ItemFlatListFriend from '../../components/ItemFlatListFriend';
 import ItemFlatListFriendisSelected from '../../components/ItemFlatListFriendisSelected';
+import requestCameraAndAudioPermission from '../CallScreen/permission';
 
 import search from '../../assets/images/search.png';
 import deleteImg from '../../assets/images/delete.png';
@@ -28,6 +29,11 @@ class MessageScreen extends Component {
             alluser: [],
             searchData: [],
             searching: false,
+        };
+        if (Platform.OS === 'android') {                   
+            requestCameraAndAudioPermission().then(_ => {
+                console.log('requested!');
+            });
         };
         this.filterSearch = this.filterSearch.bind(this);
         this.closeSearch = this.closeSearch.bind(this);
