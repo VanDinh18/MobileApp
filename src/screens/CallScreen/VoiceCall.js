@@ -14,6 +14,7 @@ import { RtcEngine, AgoraView } from 'react-native-agora';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import firebase from '@react-native-firebase/app';
 import io from 'socket.io-client';
+import User from '../../components/User';
 
 import wallpaper from '../../assets/images/wallpaper.png';
 import mic_off from '../../assets/images/mic_off.png';
@@ -37,6 +38,9 @@ class VoiceCall extends Component {
             appid: "0fedc73812c342aead62b3e673222b01",                   //Enter the App ID generated from the Agora Website
             receiver: props.navigation.state.params.data.receiver,
             sender: props.navigation.state.params.data.sender,
+            avatarReceiver: '',
+            avatarSender: '',
+            navigation: props.navigation,
             vidMute: false,                             //State variable for Video Mute
             audMute: false,                             //State variable for Audio Mute
             joinSucceed: false,                         //State variable for storing success
@@ -58,7 +62,45 @@ class VoiceCall extends Component {
         this.socket = io("https://fierce-bayou-19142.herokuapp.com/", { jsonp: false });
     }
 
-    componentDidMount() {
+    componentDidMount = async () => {
+        var receiver = this.state.receiver;
+        var sender = this.state.sender;
+        var avatarReceiver = '';
+        var avatarSender = '';
+        var navigation = this.state.navigation;
+        const Root = firebase.database().ref('users');
+        await Root.child(receiver).once('value', value => {
+            avatarReceiver = value.val().avatar;
+        });
+        await Root.child(sender).once('value', value => {
+            avatarSender = value.val().avatar;
+        });
+        this.setState({
+            avatarReceiver: avatarReceiver,
+            avatarSender: avatarSender,
+        })
+        this.socket.on("server-send-end", function (data) {
+            console.log(data);
+            RtcEngine.destroy();
+            if (User.username == sender) {
+                navigation.navigate(
+                    'ChatScreen',
+                    {
+                        name: receiver,
+                        avatar: avatarReceiver,
+                    }
+                );
+            }
+            else {
+                navigation.navigate(
+                    'ChatScreen',
+                    {
+                        name: sender,
+                        avatar: avatarSender,
+                    }
+                );
+            }
+        });
         RtcEngine.on('userJoined', (data) => {
             const { peerIds } = this.state;             //Get currrent peer IDs
             if (peerIds.indexOf(data.uid) === -1) {     //If new user has joined
@@ -81,7 +123,9 @@ class VoiceCall extends Component {
         RtcEngine.joinChannel(this.state.receiver, this.state.uid);  //Join Channel
         RtcEngine.enableAudio();                                        //Enable the audio
     }
+    componentWillUnmount() {
 
+    }
     toggleAudio = () => {
         let mute = this.state.audMute;
         console.log('Audio toggle', mute);
@@ -92,7 +136,8 @@ class VoiceCall extends Component {
     }
     endCall = () => {
         RtcEngine.destroy();
-
+        var data = 'abc';
+        this.socket.emit("client-send-end", data);
     }
     render() {
         return (
@@ -101,18 +146,40 @@ class VoiceCall extends Component {
                     source={wallpaper}
                     style={styles.wallpaper}>
                     <View style={styles.img}>
-                        <Image
-                            style={{ height: DEVICE_WIDTH / 4, width: DEVICE_WIDTH / 4, borderRadius: DEVICE_WIDTH / 8 }}
-                        />
+                        {
+                            User.username == this.state.sender
+                                ?
+                                <Image
+                                    style={{ height: DEVICE_WIDTH / 4, width: DEVICE_WIDTH / 4, borderRadius: DEVICE_WIDTH / 8 }}
+                                    source={this.state.avatarReceiver ? { uri: this.state.avatarReceiver } : null} />
+                                :
+                                <Image
+                                    style={{ height: DEVICE_WIDTH / 4, width: DEVICE_WIDTH / 4, borderRadius: DEVICE_WIDTH / 8 }}
+                                    source={this.state.avatarSender ? { uri: this.state.avatarReceiver } : null} />
+                        }
+
                     </View>
                     <View style={styles.username}>
-                        <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#e6e6e6' }}></Text>
+                        {
+                            User.username == this.state.sender
+                                ?
+                                <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#e6e6e6' }}>{this.state.receiver}</Text>
+                                :
+                                <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#e6e6e6' }}>{this.state.sender}</Text>
+                        }
                     </View>
                     <View style={styles.text}>
-                        <Text style={{ fontSize: 18, color: '#e6e6e6' }}>Đang đổ chuông...</Text>
+                        {
+                            this.state.peerIds.length <= 0
+                                ?
+                                <Text style={{ fontSize: 18, color: '#e6e6e6' }}>Đang đổ chuông...</Text>
+                                :
+                                <Text style={{ fontSize: 18, color: '#e6e6e6' }}>Cuộc gọi đang thực hiện...</Text>
+                        }
+
                     </View>
                     <View style={styles.time}>
-                        <Text style={{ fontSize: 16, color: '#e6e6e6' }}></Text>
+                        {/* <Text style={{ fontSize: 16, color: '#e6e6e6' }}>0:{this.state.time}</Text> */}
                     </View>
                     <View style={styles.button}>
                         <View style={{ flex: 1 }}>
@@ -123,11 +190,11 @@ class VoiceCall extends Component {
                                     ?
                                     <Image
                                         style={{ height: DEVICE_WIDTH / 6, width: DEVICE_WIDTH / 6, borderRadius: DEVICE_WIDTH / 12, marginBottom: 20 }}
-                                        source={mic} />
+                                        source={mic_off} />
                                     :
                                     <Image
                                         style={{ height: DEVICE_WIDTH / 6, width: DEVICE_WIDTH / 6, borderRadius: DEVICE_WIDTH / 12, marginBottom: 20 }}
-                                        source={mic_off} />
+                                        source={mic} />
                                 }
 
                                 <Text style={{ fontSize: 16, color: '#e6e6e6' }}>Loa</Text>
