@@ -147,6 +147,35 @@ class Video extends Component {
   */
   endCall() {
     RtcEngine.destroy();
+    var textMessage = 'Cuộc gọi Video đã kết thúc';
+    var sender = this.state.sender;
+    var receiver = this.state.receiver;
+    if (User.username == sender) {
+      let msgId = firebase.database().ref('messages').child(sender).child(receiver).push().key;
+      let updates = {};
+      let message = {
+        checkimage: 2,
+        message: textMessage,
+        time: firebase.database.ServerValue.TIMESTAMP,
+        from: sender,
+      }
+      updates['messages/' + sender + '/' + receiver + '/' + msgId] = message;
+      updates['messages/' + receiver + '/' + sender + '/' + msgId] = message;
+      firebase.database().ref().update(updates);
+    }
+    else {
+      let msgId = firebase.database().ref('messages').child(receiver).child(sender).push().key;
+      let updates = {};
+      let message = {
+        checkimage: 2,
+        message: textMessage,
+        time: firebase.database.ServerValue.TIMESTAMP,
+        from: sender,
+      }
+      updates['messages/' + receiver + '/' + sender + '/' + msgId] = message;
+      updates['messages/' + sender + '/' + receiver + '/' + msgId] = message;
+      firebase.database().ref().update(updates);
+    }
     var data = 'abc';
     this.socket.emit("client-send-end", data);
   }
@@ -213,11 +242,11 @@ class Video extends Component {
               {this.state.audMute
                 ?
                 <Image
-                  style={{ height: DEVICE_WIDTH / 6, width: DEVICE_WIDTH / 6, borderRadius: DEVICE_WIDTH / 12, marginBottom: 20}}
+                  style={{ height: DEVICE_WIDTH / 6, width: DEVICE_WIDTH / 6, borderRadius: DEVICE_WIDTH / 12, marginBottom: 20 }}
                   source={mic_off} />
                 :
                 <Image
-                  style={{ height: DEVICE_WIDTH / 6, width: DEVICE_WIDTH / 6, borderRadius: DEVICE_WIDTH / 12, marginBottom: 20}}
+                  style={{ height: DEVICE_WIDTH / 6, width: DEVICE_WIDTH / 6, borderRadius: DEVICE_WIDTH / 12, marginBottom: 20 }}
                   source={mic} />
               }
 
@@ -241,11 +270,11 @@ class Video extends Component {
               {this.state.vidMute
                 ?
                 <Image
-                  style={{ height: DEVICE_WIDTH / 6, width: DEVICE_WIDTH / 6, borderRadius: DEVICE_WIDTH / 12, marginBottom: 20}}
+                  style={{ height: DEVICE_WIDTH / 6, width: DEVICE_WIDTH / 6, borderRadius: DEVICE_WIDTH / 12, marginBottom: 20 }}
                   source={video_off} />
                 :
                 <Image
-                  style={{ height: DEVICE_WIDTH / 6, width: DEVICE_WIDTH / 6, borderRadius: DEVICE_WIDTH / 12, marginBottom: 20}}
+                  style={{ height: DEVICE_WIDTH / 6, width: DEVICE_WIDTH / 6, borderRadius: DEVICE_WIDTH / 12, marginBottom: 20 }}
                   source={video} />
               }
               <Text style={{ fontSize: 16, color: '#bfbfbf' }}>Video</Text>

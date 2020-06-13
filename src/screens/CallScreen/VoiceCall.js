@@ -136,6 +136,35 @@ class VoiceCall extends Component {
     }
     endCall = () => {
         RtcEngine.destroy();
+        var textMessage = 'Cuộc gọi Audio đã kết thúc';
+        var sender = this.state.sender;
+        var receiver = this.state.receiver;
+        if (User.username == sender) {
+            let msgId = firebase.database().ref('messages').child(sender).child(receiver).push().key;
+            let updates = {};
+            let message = {
+                checkimage: 2,
+                message: textMessage,
+                time: firebase.database.ServerValue.TIMESTAMP,
+                from: sender,
+            }
+            updates['messages/' + sender + '/' + receiver + '/' + msgId] = message;
+            updates['messages/' + receiver + '/' + sender + '/' + msgId] = message;
+            firebase.database().ref().update(updates);
+        }
+        else {
+            let msgId = firebase.database().ref('messages').child(receiver).child(sender).push().key;
+            let updates = {};
+            let message = {
+                checkimage: 2,
+                message: textMessage,
+                time: firebase.database.ServerValue.TIMESTAMP,
+                from: sender,
+            }
+            updates['messages/' + receiver + '/' + sender + '/' + msgId] = message;
+            updates['messages/' + sender + '/' + receiver + '/' + msgId] = message;
+            firebase.database().ref().update(updates);
+        }
         var data = 'abc';
         this.socket.emit("client-send-end", data);
     }

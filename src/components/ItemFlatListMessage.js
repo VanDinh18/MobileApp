@@ -72,7 +72,12 @@ class ItemFlatListMessage extends Component {
                         marginTop: 5,
                         marginBottom: 5,
                     }}>
-                        <Text style={{ fontSize: 16 }}>{this.state.item.message}</Text>
+                        <Text style={{
+                            fontSize: 16,
+                            fontWeight: this.state.item.checkimage == 2 ? 'bold' : 'normal',
+                        }}>
+                            {this.state.item.message}
+                        </Text>
                         <Text style={{ fontSize: 10, color: '#8c8c8c' }}>{this.convertTime(this.state.item.time)}</Text>
                     </View>
                 }
