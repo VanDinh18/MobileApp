@@ -212,65 +212,11 @@ class VoiceCall extends Component {
                         </View>
                     </View>
                 </ImageBackground>
-                {/* {
-                    this.state.peerIds.length > 1
-                        ? <View style={{ flex: 1 }}>
-                            <View style={{ height: dimensions.height * 3 / 4 - 50 }}>
-                                <AgoraView style={{ flex: 1 }}
-                                    remoteUid={this.state.peerIds[0]} mode={1} key={this.state.peerIds[0]} />
-                            </View>
-                            <View style={{ height: dimensions.height / 4 }}>
-                                <ScrollView horizontal={true} decelerationRate={0}
-                                    snapToInterval={dimensions.width / 2} snapToAlignment={'center'} style={{ width: dimensions.width, height: dimensions.height / 4 }}>
-                                    {
-                                        this.state.peerIds.slice(1).map((data) => (
-                                            <TouchableOpacity style={{ width: dimensions.width / 2, height: dimensions.height / 4 }}
-                                                onPress={() => this.peerClick(data)} key={data}>
-                                                <AgoraView style={{ width: dimensions.width / 2, height: dimensions.height / 4 }}
-                                                    remoteUid={data} mode={1} key={data} />
-                                            </TouchableOpacity>
-                                        ))
-                                    }
-                                </ScrollView>
-                            </View>
-                        </View>
-                        : this.state.peerIds.length > 0
-                            ? <View style={{ height: dimensions.height - 50 }}>
-                                <AgoraView style={{ flex: 1 }}
-                                    remoteUid={this.state.peerIds[0]} mode={1} />
-                            </View>
-                            : <Text>No users connected</Text>
-                } */}
-                {/* {
-                    !this.state.vidMute                                              //view for local video
-                        ? <AgoraView style={styles.localVideoStyle} zOrderMediaOverlay={true} showLocalVideo={true} mode={1} />
-                        : <View />
-                } */}
-                {/* <View style={styles.buttonBar}>
-                    <Icon.Button style={styles.iconStyle}
-                        backgroundColor="#0093E9"
-                        name={this.state.audMute ? 'mic-off' : 'mic'}
-                        onPress={() => this.toggleAudio()}
-                    />
-                    <Icon.Button style={styles.iconStyle}
-                        backgroundColor="#0093E9"
-                        name="call-end"
-                        onPress={() => this.endCall()}
-                    />
-                    <Icon.Button style={styles.iconStyle}
-                        backgroundColor="#0093E9"
-                        name={this.state.vidMute ? 'videocam-off' : 'videocam'}
-                        onPress={() => this.toggleVideo()}
-                    />
-                </View> */}
             </View>
         )
     }
 }
-let dimensions = {                                            //get dimensions of the device to use in view styles
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
-};
+
 const DEVICE_WIDTH = Dimensions.get('window').width;
 const DEVICE_HEIGHT = Dimensions.get('window').height;
 
@@ -297,34 +243,6 @@ const styles = StyleSheet.create({
         marginTop: DEVICE_HEIGHT / 3,
         flex: 1,
         flexDirection: 'row',
-    },
-    buttonBar: {
-        height: 50,
-        backgroundColor: '#0093E9',
-        display: 'flex',
-        width: '100%',
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignContent: 'center',
-    },
-    localVideoStyle: {
-        width: 140,
-        height: 160,
-        position: 'absolute',
-        top: 5,
-        right: 5,
-        zIndex: 100,
-    },
-    iconStyle: {
-        fontSize: 34,
-        paddingTop: 15,
-        paddingLeft: 40,
-        paddingRight: 40,
-        paddingBottom: 15,
-        borderRadius: 0,
     },
 });
 

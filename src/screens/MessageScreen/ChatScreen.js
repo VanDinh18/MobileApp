@@ -59,7 +59,7 @@ export default class ChatScreen extends Component {
         navigation.navigate(
             'Video',
             {
-                ChannelName: this.state.person.name,
+                data: data,
             }
         );
     }

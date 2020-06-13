@@ -2,11 +2,17 @@
 /* eslint-disable prettier/prettier */
 
 import React, { Component } from 'react';
-import { View, StyleSheet, NativeModules, ScrollView, Text, Dimensions, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, NativeModules, ScrollView, Text, Dimensions, TouchableOpacity, Image } from 'react-native';
 import { RtcEngine, AgoraView } from 'react-native-agora';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import firebase from '@react-native-firebase/app';
 import io from 'socket.io-client';
+import User from '../../components/User';
+
+import mic_off from '../../assets/images/mic_off.png';
+import mic from '../../assets/images/mic.png';
+import phone_cancle from '../../assets/images/phone_cancle.png';
+import video from '../../assets/images/video.png';
+import video_off from '../../assets/images/video_off.png';
 
 const { Agora } = NativeModules;                  //Define Agora object as a native module
 
@@ -24,9 +30,11 @@ class Video extends Component {
       peerIds: [],                                                  //Array for storing connected peers
       uid: Math.floor(Math.random() * 100),                           //Generate a UID for local user
       appid: "0fedc73812c342aead62b3e673222b01",                    //Enter the App ID generated from the Agora Website
-      channelName: props.navigation.state.params.ChannelName,        //Channel Name for the current session
+      receiver: props.navigation.state.params.data.receiver,
+      sender: props.navigation.state.params.data.sender,
+      avatarReceiver: '',
+      avatarSender: '',      //Channel Name for the current session
       navigation: props.navigation,
-      avatar: '',
       vidMute: false,                             //State variable for Video Mute
       audMute: false,                             //State variable for Audio Mute
       joinSucceed: false,                         //State variable for storing success
@@ -49,27 +57,44 @@ class Video extends Component {
 
   }
   componentDidMount = async () => {
-    var channelName = this.state.channelName;
+    var receiver = this.state.receiver;
+    var sender = this.state.sender;
+    var avatarReceiver = '';
+    var avatarSender = '';
     var navigation = this.state.navigation;
-    var avatar = '';
     const Root = firebase.database().ref('users');
-    await Root.child(channelName).once('value', value => {
-      avatar = value.val().avatar;
-    })
-    this.setState({ avatar: avatar });
-    //
+    await Root.child(receiver).once('value', value => {
+      avatarReceiver = value.val().avatar;
+    });
+    await Root.child(sender).once('value', value => {
+      avatarSender = value.val().avatar;
+    });
+    this.setState({
+      avatarReceiver: avatarReceiver,
+      avatarSender: avatarSender,
+    });
     this.socket.on("server-send-end", function (data) {
       console.log(data);
       RtcEngine.destroy();
-      navigation.navigate(
-        'ChatScreen',
-        {
-          name: channelName,
-          avatar: avatar,
-        }
-      );
-    })
-    //
+      if (User.username == sender) {
+        navigation.navigate(
+          'ChatScreen',
+          {
+            name: receiver,
+            avatar: avatarReceiver,
+          }
+        );
+      }
+      else {
+        navigation.navigate(
+          'ChatScreen',
+          {
+            name: sender,
+            avatar: avatarSender,
+          }
+        );
+      }
+    });
     RtcEngine.on('userJoined', (data) => {
       const { peerIds } = this.state;             //Get currrent peer IDs
       if (peerIds.indexOf(data.uid) === -1) {     //If new user has joined
@@ -89,7 +114,7 @@ class Video extends Component {
         joinSucceed: true,                                           //Set state variable to true
       });
     });
-    RtcEngine.joinChannel(this.state.channelName, this.state.uid);  //Join Channel
+    RtcEngine.joinChannel(this.state.receiver, this.state.uid);  //Join Channel
     RtcEngine.enableAudio();                                        //Enable the audio
   }
   /**
@@ -122,13 +147,6 @@ class Video extends Component {
   */
   endCall() {
     RtcEngine.destroy();
-    this.props.navigation.navigate(
-      'ChatScreen',
-      {
-        name: this.state.channelName,
-        avatar: this.state.avatar,
-      }
-    );
     var data = 'abc';
     this.socket.emit("client-send-end", data);
   }
@@ -152,22 +170,22 @@ class Video extends Component {
   */
   videoView() {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, resizeMode: "cover", }}>
         {
           this.state.peerIds.length > 1
             ? <View style={{ flex: 1 }}>
-              <View style={{ height: dimensions.height * 3 / 4 - 50 }}>
+              <View style={{ height: DEVICE_HEIGHT * 3 / 4 - 50 }}>
                 <AgoraView style={{ flex: 1 }}
                   remoteUid={this.state.peerIds[0]} mode={1} key={this.state.peerIds[0]} />
               </View>
-              <View style={{ height: dimensions.height / 4 }}>
+              <View style={{ height: DEVICE_HEIGHT / 4 }}>
                 <ScrollView horizontal={true} decelerationRate={0}
-                  snapToInterval={dimensions.width / 2} snapToAlignment={'center'} style={{ width: dimensions.width, height: dimensions.height / 4 }}>
+                  snapToInterval={DEVICE_WIDTH / 2} snapToAlignment={'center'} style={{ width: DEVICE_WIDTH, height: DEVICE_HEIGHT / 4 }}>
                   {
                     this.state.peerIds.slice(1).map((data) => (
-                      <TouchableOpacity style={{ width: dimensions.width / 2, height: dimensions.height / 4 }}
+                      <TouchableOpacity style={{ width: DEVICE_WIDTH / 2, height: DEVICE_HEIGHT / 4 }}
                         onPress={() => this.peerClick(data)} key={data}>
-                        <AgoraView style={{ width: dimensions.width / 2, height: dimensions.height / 4 }}
+                        <AgoraView style={{ width: DEVICE_WIDTH / 2, height: DEVICE_HEIGHT / 4 }}
                           remoteUid={data} mode={1} key={data} />
                       </TouchableOpacity>
                     ))
@@ -176,7 +194,7 @@ class Video extends Component {
               </View>
             </View>
             : this.state.peerIds.length > 0
-              ? <View style={{ height: dimensions.height - 50 }}>
+              ? <View style={{ height: DEVICE_HEIGHT }}>
                 <AgoraView style={{ flex: 1 }}
                   remoteUid={this.state.peerIds[0]} mode={1} />
               </View>
@@ -187,22 +205,52 @@ class Video extends Component {
             ? <AgoraView style={styles.localVideoStyle} zOrderMediaOverlay={true} showLocalVideo={true} mode={1} />
             : <View />
         }
-        <View style={styles.buttonBar}>
-          <Icon.Button style={styles.iconStyle}
-            backgroundColor="#0093E9"
-            name={this.state.audMute ? 'mic-off' : 'mic'}
-            onPress={() => this.toggleAudio()}
-          />
-          <Icon.Button style={styles.iconStyle}
-            backgroundColor="#0093E9"
-            name="call-end"
-            onPress={() => this.endCall()}
-          />
-          <Icon.Button style={styles.iconStyle}
-            backgroundColor="#0093E9"
-            name={this.state.vidMute ? 'videocam-off' : 'videocam'}
-            onPress={() => this.toggleVideo()}
-          />
+        <View style={styles.button}>
+          <View style={{ flex: 1 }}>
+            <TouchableOpacity
+              onPress={() => this.toggleAudio()}
+              style={{ justifyContent: 'center', alignItems: 'center' }}>
+              {this.state.audMute
+                ?
+                <Image
+                  style={{ height: DEVICE_WIDTH / 6, width: DEVICE_WIDTH / 6, borderRadius: DEVICE_WIDTH / 12, marginBottom: 20}}
+                  source={mic_off} />
+                :
+                <Image
+                  style={{ height: DEVICE_WIDTH / 6, width: DEVICE_WIDTH / 6, borderRadius: DEVICE_WIDTH / 12, marginBottom: 20}}
+                  source={mic} />
+              }
+
+              <Text style={{ fontSize: 16, color: '#bfbfbf' }}>Loa</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{ flex: 1 }}>
+            <TouchableOpacity
+              onPress={() => this.endCall()}
+              style={{ justifyContent: 'center', alignItems: 'center' }}>
+              <Image
+                style={{ height: DEVICE_WIDTH / 6, width: DEVICE_WIDTH / 6, borderRadius: DEVICE_WIDTH / 12, marginBottom: 20 }}
+                source={phone_cancle} />
+              <Text style={{ fontSize: 16, color: '#bfbfbf' }}>Kết thúc</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{ flex: 1 }}>
+            <TouchableOpacity
+              onPress={() => this.toggleVideo()}
+              style={{ justifyContent: 'center', alignItems: 'center' }}>
+              {this.state.vidMute
+                ?
+                <Image
+                  style={{ height: DEVICE_WIDTH / 6, width: DEVICE_WIDTH / 6, borderRadius: DEVICE_WIDTH / 12, marginBottom: 20}}
+                  source={video_off} />
+                :
+                <Image
+                  style={{ height: DEVICE_WIDTH / 6, width: DEVICE_WIDTH / 6, borderRadius: DEVICE_WIDTH / 12, marginBottom: 20}}
+                  source={video} />
+              }
+              <Text style={{ fontSize: 16, color: '#bfbfbf' }}>Video</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     );
@@ -212,23 +260,18 @@ class Video extends Component {
   }
 }
 
-let dimensions = {                                            //get dimensions of the device to use in view styles
-  width: Dimensions.get('window').width,
-  height: Dimensions.get('window').height,
-};
+const DEVICE_WIDTH = Dimensions.get('window').width;
+const DEVICE_HEIGHT = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
-  buttonBar: {
-    height: 50,
-    backgroundColor: '#0093E9',
-    display: 'flex',
-    width: '100%',
+  button: {
+    width: DEVICE_WIDTH,
     position: 'absolute',
-    bottom: 0,
-    left: 0,
+    top: DEVICE_HEIGHT / 4 * 3,
     flexDirection: 'row',
     justifyContent: 'center',
     alignContent: 'center',
+    zIndex: 99,
   },
   localVideoStyle: {
     width: 140,
@@ -237,14 +280,6 @@ const styles = StyleSheet.create({
     top: 5,
     right: 5,
     zIndex: 100,
-  },
-  iconStyle: {
-    fontSize: 34,
-    paddingTop: 15,
-    paddingLeft: 40,
-    paddingRight: 40,
-    paddingBottom: 15,
-    borderRadius: 0,
   },
 });
 

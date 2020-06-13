@@ -39,10 +39,14 @@ class AwaitScreen extends Component {
         )
     }
     accept = () => {
+        var data = {
+            receiver: this.state.receiver,
+            sender: this.state.sender,
+        };
         this.props.navigation.navigate(
             'Video',
             {
-                ChannelName: this.state.receiver,
+                data: data,
             }
         )
     }
