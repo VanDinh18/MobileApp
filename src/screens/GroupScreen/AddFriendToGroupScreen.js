@@ -228,7 +228,7 @@ class AddFriendToGroupScreen extends Component {
                 </View>
                 <View style={styles.groupname}>
                     <TouchableOpacity
-                        style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        style={styles.buttonGroupname}>
                         <View style={[
                             { height: 60, width: 60, borderRadius: 50, justifyContent: 'center', alignItems: 'center' },
                             this.state.isFocusedGroupname ? { backgroundColor: '#cce6ff' } : { backgroundColor: '#f2f2f2' }
@@ -239,12 +239,7 @@ class AddFriendToGroupScreen extends Component {
                         </View>
                     </TouchableOpacity>
                     <TextInput
-                        style={{
-                            flex: 4,
-                            marginTop: 10,
-                            marginRight: 10,
-                            marginBottom: 15,
-                        }}
+                        style={styles.txtGroupname}
                         placeholder='Đặt tên nhóm'
                         selectionColor='#428AF8'
                         underlineColorAndroid={this.state.isFocusedGroupname ? '#428AF8' : '#D3D3D3'}
@@ -332,13 +327,16 @@ const styles = StyleSheet.create({
         flex: 1
     },
     header: {
-        flex: 1,
+        // flex: 1,
+        height: 50,
         flexDirection: 'row',
         backgroundColor: '#66b3ff',
     },
     groupname: {
-        flex: 1.2,
+        height: 60,
         flexDirection: 'row',
+        justifyContent: 'space-around',
+        margin: 10
     },
     listFriendIsSelected: {
         flex: 1.2,
@@ -346,12 +344,20 @@ const styles = StyleSheet.create({
         backgroundColor: '#cce6ff'
     },
     searchBar: {
-        flex: 1,
+        // flex: 1,
+        height: 50,
         justifyContent: 'flex-end',
     },
     listFriendWillSelect: {
         flex: 7.6,
+    },
+    buttonGroupname: { 
+        width: 60,
+        justifyContent: 'center', 
+        alignItems: 'center' 
+    },
+    txtGroupname: {
+        flex: 1,
     }
-
 })
 export default AddFriendToGroupScreen;
