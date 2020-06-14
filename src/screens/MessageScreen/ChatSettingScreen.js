@@ -66,7 +66,7 @@ class ChatSettingScreen extends Component {
                             alignItems: 'center',
 
                         }}>
-                        <Text style={{ fontSize: 20, color: 'white' }}>Tùy chọn</Text>
+                        <Text style={{ fontSize: 20, color: 'white' }}>Tùy chờn</Text>
                     </View>
                     <View
                         style={{
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     header: {
-        flex: 1,
+        height: 50,
         flexDirection: 'row',
         backgroundColor: '#66b3ff',
     },
