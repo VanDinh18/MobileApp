@@ -66,7 +66,7 @@ class ChatSettingScreen extends Component {
                             alignItems: 'center',
 
                         }}>
-                        <Text style={{ fontSize: 20, color: 'white' }}>Tùy chờn</Text>
+                        <Text style={{ fontSize: 20, color: 'white' }}>Tùy chỉnh</Text>
                     </View>
                     <View
                         style={{

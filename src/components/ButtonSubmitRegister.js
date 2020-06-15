@@ -20,11 +20,6 @@ export default class ButtonSubmitRegister extends Component {
         this.state = {
             userExist: [],
         };
-        this.registerAccount = this.registerAccount.bind(this);
-        this.validate = this.validate.bind(this);
-        this.submit = this.submit.bind(this);
-        this.writeUserData = this.writeUserData.bind(this);
-        this.checkUsernameExist = this.checkUsernameExist.bind(this);
     }
 
     componentDidMount() {
